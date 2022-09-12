@@ -8,7 +8,8 @@ import java.util.List;
 
 import static lt.vu.mif.Startup.PLAYER_HEIGHT;
 import static lt.vu.mif.Startup.PLAYER_WIDTH;
-import static lt.vu.mif.Startup.SPELL_SIZE;
+import static lt.vu.mif.Startup.SPELL_HEIGHT;
+import static lt.vu.mif.Startup.SPELL_WIDTH;
 import static lt.vu.mif.Startup.WALL_HEIGHT;
 import static lt.vu.mif.Startup.WALL_WIDTH;
 import static lt.vu.mif.Startup.p;
@@ -63,10 +64,12 @@ class Spell extends GameElement {
 
     private boolean collision(Player player) {
         for (int j = 0; j < xPos.size(); j++) {
-            if (player.getXPos() + PLAYER_WIDTH / 2 >= xPos.get(j) &&
-                    player.getXPos() <= xPos.get(j) + SPELL_SIZE / 2 &&
-                    player.getYPos() + PLAYER_HEIGHT / 2 >= yPos.get(j) &&
-                    player.getYPos() <= yPos.get(j)) {
+            if (player.getXPos() + PLAYER_WIDTH - 16 >= xPos.get(j) &&
+                    player.getXPos() <= xPos.get(j) + SPELL_WIDTH - 16 &&
+                    player.getYPos() + PLAYER_HEIGHT >= yPos.get(j) &&
+                    player.getYPos() <= yPos.get(j) + SPELL_HEIGHT - 16) {
+                xPos.set(j, initialXpos);
+                yPos.set(j, initialYpos);
                 return true;
             }
         }
@@ -76,10 +79,10 @@ class Spell extends GameElement {
     private boolean collision(Map map) {
         for (int j = 0; j < xPos.size(); j++) {
             for (int i = 0; i < map.getPositionSize(); i++) {
-                if (map.getXPos(i) + WALL_WIDTH >= xPos.get(j) &&
-                        map.getXPos(i) <= xPos.get(j) + SPELL_SIZE &&
+                if (map.getXPos(i) + WALL_WIDTH - 16 >= xPos.get(j) &&
+                        map.getXPos(i) <= xPos.get(j) + SPELL_WIDTH - 16 &&
                         map.getYPos(i) + WALL_HEIGHT >= yPos.get(j) &&
-                        map.getYPos(i) <= yPos.get(j) + SPELL_SIZE) {
+                        map.getYPos(i) <= yPos.get(j) + SPELL_HEIGHT - 16) {
                     xPos.set(j, initialXpos);
                     yPos.set(j, initialYpos);
                     return true;
@@ -113,34 +116,31 @@ class Spell extends GameElement {
     }
 
     private void move() {
-        // spell logic
-        if (cooldown < p.millis() - initialTime) {
-            initialTime = p.millis();
-            yPos.set(UP, yPos.get(UP) - offset);
 
-            xPos.set(UP_RIGHT, xPos.get(UP_RIGHT) + offset);
-            yPos.set(UP_RIGHT, yPos.get(UP_RIGHT) - offset);
+        yPos.set(UP, yPos.get(UP) - offset);
 
-            xPos.set(LEFT, xPos.get(LEFT) - offset);
+        xPos.set(UP_RIGHT, xPos.get(UP_RIGHT) + offset);
+        yPos.set(UP_RIGHT, yPos.get(UP_RIGHT) - offset);
 
-            xPos.set(UP_LEFT, xPos.get(UP_LEFT) - offset);
-            yPos.set(UP_LEFT, yPos.get(UP_LEFT) - offset);
+        xPos.set(LEFT, xPos.get(LEFT) - offset);
 
-            yPos.set(DOWN, yPos.get(DOWN) + offset);
+        xPos.set(UP_LEFT, xPos.get(UP_LEFT) - offset);
+        yPos.set(UP_LEFT, yPos.get(UP_LEFT) - offset);
 
-            xPos.set(DOWN_RIGHT, xPos.get(DOWN_RIGHT) + offset);
-            yPos.set(DOWN_RIGHT, yPos.get(DOWN_RIGHT) + offset);
+        yPos.set(DOWN, yPos.get(DOWN) + offset);
 
-            xPos.set(RIGHT, xPos.get(RIGHT) + offset);
+        xPos.set(DOWN_RIGHT, xPos.get(DOWN_RIGHT) + offset);
+        yPos.set(DOWN_RIGHT, yPos.get(DOWN_RIGHT) + offset);
 
-            xPos.set(DOWN_LEFT, xPos.get(DOWN_LEFT) - offset);
-            yPos.set(DOWN_LEFT, yPos.get(DOWN_LEFT) + offset);
-        }
+        xPos.set(RIGHT, xPos.get(RIGHT) + offset);
+
+        xPos.set(DOWN_LEFT, xPos.get(DOWN_LEFT) - offset);
+        yPos.set(DOWN_LEFT, yPos.get(DOWN_LEFT) + offset);
     }
 
     private void animate() {
         for (int i = 0; i < 8; i++) {
-            p.image(sprite[i][1 + (int) currentFrame], xPos.get(i), yPos.get(i), SPELL_SIZE, SPELL_SIZE);
+            p.image(sprite[i][1 + (int) currentFrame], xPos.get(i), yPos.get(i), SPELL_WIDTH, SPELL_HEIGHT);
         }
     }
 

@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import processing.core.PImage;
 
-import static lt.vu.mif.Startup.PLAYER_HEIGHT;
-import static lt.vu.mif.Startup.PLAYER_WIDTH;
 import static lt.vu.mif.Startup.p;
 
 @Setter
@@ -34,10 +32,7 @@ class Background extends GameElement {
     }
 
     private boolean collision(Player player) {
-        return player.getXPos() + PLAYER_WIDTH >= xPos &&
-                player.getXPos() <= 0 &&
-                player.getYPos() + PLAYER_HEIGHT >= yPos &&
-                player.getYPos() <= 0;
+        return false;
     }
 
     @Override

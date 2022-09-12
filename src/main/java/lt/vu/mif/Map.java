@@ -52,7 +52,7 @@ class Map extends GameElement {
             if (player.getXPos() + PLAYER_WIDTH - 16 >= getXPos(i) &&
                     player.getXPos() <= getXPos(i) + WALL_WIDTH - 16 &&
                     player.getYPos() + PLAYER_HEIGHT >= getYPos(i) &&
-                    player.getYPos() <= getYPos(i) + WALL_HEIGHT - PLAYER_HEIGHT / 2) {
+                    player.getYPos() <= getYPos(i) + WALL_HEIGHT - 16) {
                 return true;
             }
         }

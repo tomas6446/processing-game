@@ -6,7 +6,6 @@ import processing.core.PImage;
 
 import static lt.vu.mif.Startup.PLAYER_HEIGHT;
 import static lt.vu.mif.Startup.PLAYER_WIDTH;
-import static lt.vu.mif.Startup.SCREEN_WIDTH;
 import static lt.vu.mif.Startup.p;
 
 @Getter
@@ -19,8 +18,8 @@ class Player extends GameElement {
     public static final int SPEED = 4;
 
     // player position
-    private int xPos = SCREEN_WIDTH / 2 - PLAYER_WIDTH / 2;
-    private int yPos = SCREEN_WIDTH / 2 - PLAYER_WIDTH / 2;
+    private int xPos;
+    private int yPos;
     // player sprite sheets
     private final int spriteRows = 9;
     private final int spriteColumns = 4;
@@ -31,9 +30,11 @@ class Player extends GameElement {
     private int currentDirection;
     private double currentFrame;
 
-    public Player(PImage spriteSheet) {
+    public Player(PImage spriteSheet, int xPos, int yPos) {
         this.spriteSheet = spriteSheet;
         this.sprite = new PImage[spriteColumns][spriteRows];
+        this.xPos = xPos;
+        this.yPos = yPos;
         init();
     }
 

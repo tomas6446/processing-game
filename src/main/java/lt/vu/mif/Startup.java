@@ -7,16 +7,35 @@ public class Startup extends PApplet {
     public static PApplet p;
 
     // TODO Properties file
+//    try (
+//    InputStream input = new FileInputStream("game.properties")) {
+//        Properties prop = new Properties();
+//        prop.load(input);
+//        WALL_WIDTH = parseInt(prop.getProperty("WALL_WIDTH"));
+//        WALL_HEIGHT = parseInt(prop.getProperty("WALL_HEIGHT"));
+//        SCREEN_WIDTH = parseInt(prop.getProperty("SCREEN_WIDTH"));
+//        SCREEN_HEIGHT = parseInt(prop.getProperty("SCREEN_HEIGHT"));
+//        PLAYER_WIDTH = parseInt(prop.getProperty("PLAYER_WIDTH"));
+//        PLAYER_HEIGHT = parseInt(prop.getProperty("PLAYER_HEIGHT"));
+//        ENEMY_WIDTH = parseInt(prop.getProperty("ENEMY_WIDTH"));
+//        ENEMY_HEIGHT = parseInt(prop.getProperty("ENEMY_HEIGHT"));
+//        SPELL_WIDTH = parseInt(prop.getProperty("SPELL_WIDTH"));
+//        SPELL_HEIGHT = parseInt(prop.getProperty("SPELL_HEIGHT"));
+//    } catch (
+//    IOException ex) {
+//        ex.printStackTrace();
+//    }
     // param
-    public static final int WALL_WIDTH = 110;
-    public static final int WALL_HEIGHT = 110;
+    public static final int WALL_WIDTH = 64;
+    public static final int WALL_HEIGHT = 64;
     public static final int SCREEN_WIDTH = 600;
     public static final int SCREEN_HEIGHT = 600;
-    public static final int PLAYER_WIDTH = 70;
-    public static final int PLAYER_HEIGHT = 60;
-    public static final int ENEMY_WIDTH = 120;
-    public static final int ENEMY_HEIGHT = 120;
-    public static final int SPELL_SIZE = 70;
+    public static final int PLAYER_WIDTH = 64;
+    public static final int PLAYER_HEIGHT = 64;
+    public static final int ENEMY_WIDTH = 64;
+    public static final int ENEMY_HEIGHT = 64;
+    public static final int SPELL_WIDTH = 64;
+    public static final int SPELL_HEIGHT = 64;
 
     private int STAGE = 0;
 
@@ -26,7 +45,6 @@ public class Startup extends PApplet {
         p = this;
     }
 
-    @Override
     public void settings() {
         size(SCREEN_WIDTH, SCREEN_HEIGHT);
     }
@@ -89,22 +107,24 @@ public class Startup extends PApplet {
                 loadImage("dragon.png"),    /* enemy list */
                 loadImage("fireball.png"),  /* enemy spell */
                 loadImage("player.png"),    /* player */
+                loadImage("healthBar.png"), /* health bar */
                 loadImage("exit.png"),      /* exit */
                 map[STAGE]
         );
     }
 
-    @Override
     public void setup() {
-        frameRate(120);
+        frameRate(60);
         gameInit();
     }
 
-    @Override
     public void draw() {
         clear();
         if (game.isNextStage()) {
             STAGE++;
+            gameInit();
+        } else if (game.isGameOver()) {
+            STAGE = 0;
             gameInit();
         } else {
             game.render();
@@ -112,14 +132,17 @@ public class Startup extends PApplet {
 
     }
 
-    @Override
     public void keyPressed() {
-        game.getKeys()[key] = true;
+        if (game.isAllowed(key)) {
+            game.getKeys()[key] = true;
+        }
+
     }
 
-    @Override
     public void keyReleased() {
-        game.getKeys()[key] = false;
+        if (game.isAllowed(key)) {
+            game.getKeys()[key] = false;
+        }
     }
 
 }

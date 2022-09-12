@@ -24,7 +24,7 @@ class Enemy extends GameElement {
 
     public Enemy(PImage enemySprite, PImage spellSprite, int xPos, int yPos) {
         for (int i = 0; i < 4; i++) {
-            spellList.add(new Spell(spellSprite, xPos + 20, yPos + 10, i));
+            spellList.add(new Spell(spellSprite, xPos, yPos, i));
         }
         this.enemySprite = enemySprite;
         this.spellSprite = spellSprite;
@@ -44,7 +44,7 @@ class Enemy extends GameElement {
         return player.getXPos() + PLAYER_WIDTH - 16 >= xPos &&
                 player.getXPos() <= xPos + ENEMY_WIDTH - 16 &&
                 player.getYPos() + PLAYER_HEIGHT >= yPos &&
-                player.getYPos() <= yPos + ENEMY_HEIGHT - PLAYER_HEIGHT / 2;
+                player.getYPos() <= yPos + ENEMY_HEIGHT - 16;
     }
 
     @Override

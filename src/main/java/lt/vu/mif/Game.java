@@ -13,16 +13,20 @@ import static lt.vu.mif.Startup.WALL_WIDTH;
 class Game {
     private final Map map;
     private final Background background;
+
+    private final HealthBar healthBar;
     private final List<Enemy> enemyList = new ArrayList<>();
     private final boolean[] keys;
     private Player player;
     private Exit exit;
 
     private boolean nextStage = false;
+    private boolean gameOver = false;
 
-    public Game(PImage backgroundSprite, PImage wallSprite, PImage enemySprite, PImage fireballSprite, PImage playerSprite, PImage exitSprite, int[][] wallMap) {
+    public Game(PImage backgroundSprite, PImage wallSprite, PImage enemySprite, PImage fireballSprite, PImage playerSprite, PImage healthBar, PImage exitSprite, int[][] wallMap) {
         this.map = new Map(wallSprite, wallMap);
-        this.background = new Background(backgroundSprite, 0, 0, wallMap[0].length * WALL_WIDTH, wallMap.length * WALL_HEIGHT);
+        this.healthBar = new HealthBar(healthBar);
+        this.background = new Background(backgroundSprite, this.map.getXPos(0), this.map.getYPos(0), wallMap[0].length * WALL_WIDTH, wallMap.length * WALL_HEIGHT);
         this.keys = new boolean[128];
 
         init(enemySprite, fireballSprite, playerSprite, exitSprite);
@@ -37,10 +41,16 @@ class Game {
         player.render();
         /* draw enemies */
         enemyList.forEach(Enemy::render);
+        /* draw health bar */
+        healthBar.render();
         /* draw exit */
         exit.render();
 
         move();
+    }
+
+    public boolean isAllowed(char key) {
+        return key == 'w' || key == 's' || key == 'a' || key == 'd';
     }
 
     public void move() {
@@ -72,12 +82,17 @@ class Game {
         enemyList.forEach(enemy -> enemy.update(xDelta, yDelta));
     }
 
+    public void goBack(int xDelta, int yDelta) {
+        player.goBack(xDelta, yDelta);
+        map.goBack(xDelta, yDelta);
+        background.goBack(xDelta, yDelta);
+        exit.goBack(xDelta, yDelta);
+        enemyList.forEach(enemy -> enemy.goBack(xDelta, yDelta));
+    }
+
     public void collision(int xDelta, int yDelta) {
         if (map.collision(player)) {
-            map.goBack(xDelta, yDelta);
-            background.goBack(xDelta, yDelta);
-            exit.goBack(xDelta, yDelta);
-            enemyList.forEach(enemy -> enemy.goBack(xDelta, yDelta));
+            goBack(xDelta, yDelta);
         }
         if (exit.collision(player)) {
             System.out.println("Next stage: ...");
@@ -85,17 +100,18 @@ class Game {
         }
         for (Enemy enemy : enemyList) {
             if (enemy.collision(player)) {
-                map.goBack(xDelta, yDelta);
-                background.goBack(xDelta, yDelta);
-                exit.goBack(xDelta, yDelta);
-                enemy.goBack(xDelta, yDelta);
+                goBack(xDelta, yDelta);
             } else {
                 for (Spell spell : enemy.getSpellList()) {
                     if (spell.collision(player)) {
+                        healthBar.removeHealth();
+                        if(healthBar.getHealthCount() == 0) {
+                            gameOver = true;
+                        }
                         System.out.println("fireball hit player");
                     }
                     if(spell.collision(map)) {
-                        System.out.println("fireball hit map");
+                        //System.out.println("fireball hit map");
                     }
                 }
             }
@@ -107,10 +123,11 @@ class Game {
             for (int j = 0; j < map.getMatrix()[0].length; j++) {
                 int x = j * WALL_WIDTH;
                 int y = i * WALL_HEIGHT;
+
                 if (map.getMatrix()[i][j] == MapElement.WALL.getElementNumber()) {
                     this.map.pushPositions(j * WALL_WIDTH, i * WALL_HEIGHT);
                 } else if (map.getMatrix()[i][j] == MapElement.PLAYER.getElementNumber()) {
-                    this.player = new Player(playerSprite);
+                    this.player = new Player(playerSprite, j * WALL_WIDTH, i * WALL_HEIGHT);
                 } else if (map.getMatrix()[i][j] == MapElement.ENEMY.getElementNumber()) {
                     this.enemyList.add(new Enemy(enemySprite, fireballSprite, x, y));
                 } else if (map.getMatrix()[i][j] == MapElement.EXIT.getElementNumber()) {
