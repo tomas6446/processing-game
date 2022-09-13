@@ -8,25 +8,23 @@ import java.util.List;
 
 import static lt.vu.mif.Startup.WALL_HEIGHT;
 import static lt.vu.mif.Startup.WALL_WIDTH;
+import static lt.vu.mif.Startup.p;
 
 @Getter
 class Game {
     private final Map map;
-    private final Background background;
-
     private final HealthBar healthBar;
     private final List<Enemy> enemyList = new ArrayList<>();
-    private final boolean[] keys;
     private Player player;
     private Exit exit;
 
+    private final boolean[] keys;
     private boolean nextStage = false;
     private boolean gameOver = false;
 
     public Game(PImage backgroundSprite, PImage wallSprite, PImage enemySprite, PImage fireballSprite, PImage playerSprite, PImage healthBar, PImage exitSprite, int[][] wallMap) {
         this.map = new Map(wallSprite, wallMap);
         this.healthBar = new HealthBar(healthBar);
-        this.background = new Background(backgroundSprite, this.map.getXPos(0), this.map.getYPos(0), wallMap[0].length * WALL_WIDTH, wallMap.length * WALL_HEIGHT);
         this.keys = new boolean[128];
 
         init(enemySprite, fireballSprite, playerSprite, exitSprite);
@@ -34,7 +32,8 @@ class Game {
 
     public void render() {
         /* draw background */
-        background.render();
+        p.fill(135,206,235);
+        p.rect(-2000, -2000, 4000, 4000);
         /* draw map */
         map.render();
         /* draw player */
@@ -50,7 +49,7 @@ class Game {
     }
 
     public boolean isAllowed(char key) {
-        return key == 'w' || key == 's' || key == 'a' || key == 'd';
+        return key != 'w' && key != 's' && key != 'a' && key != 'd';
     }
 
     public void move() {
@@ -75,7 +74,6 @@ class Game {
     }
 
     public void update(int xDelta, int yDelta) {
-        background.update(xDelta, yDelta);
         map.update(xDelta, yDelta);
         player.update(xDelta, yDelta);
         exit.update(xDelta, yDelta);
@@ -83,9 +81,8 @@ class Game {
     }
 
     public void goBack(int xDelta, int yDelta) {
-        player.goBack(xDelta, yDelta);
         map.goBack(xDelta, yDelta);
-        background.goBack(xDelta, yDelta);
+        player.goBack(xDelta, yDelta);
         exit.goBack(xDelta, yDelta);
         enemyList.forEach(enemy -> enemy.goBack(xDelta, yDelta));
     }

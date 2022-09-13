@@ -34,9 +34,7 @@ public class Startup extends PApplet {
     public static final int PLAYER_HEIGHT = 64;
     public static final int ENEMY_WIDTH = 64;
     public static final int ENEMY_HEIGHT = 64;
-    public static final int SPELL_WIDTH = 64;
-    public static final int SPELL_HEIGHT = 64;
-
+    public static final int SPELL_SIZE = 48;
     private int STAGE = 0;
 
     private Game game;
@@ -120,29 +118,33 @@ public class Startup extends PApplet {
 
     public void draw() {
         clear();
-        if (game.isNextStage()) {
+        if (!game.isNextStage()) {
+            if (game.isGameOver()) {
+                STAGE = 0;
+                gameInit();
+            } else {
+                game.render();
+            }
+        } else {
             STAGE++;
             gameInit();
-        } else if (game.isGameOver()) {
-            STAGE = 0;
-            gameInit();
-        } else {
-            game.render();
         }
 
     }
 
     public void keyPressed() {
         if (game.isAllowed(key)) {
-            game.getKeys()[key] = true;
+            return;
         }
+        game.getKeys()[key] = true;
 
     }
 
     public void keyReleased() {
         if (game.isAllowed(key)) {
-            game.getKeys()[key] = false;
+            return;
         }
+        game.getKeys()[key] = false;
     }
 
 }
