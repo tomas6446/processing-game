@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 public class Controller {
     private Map map;
-
     private boolean[] keys;
     private int xDelta;
     private int yDelta;
@@ -22,10 +21,10 @@ public class Controller {
         this.keys = new boolean[128];
     }
 
-    public void update() {
+    public void update(int offset) {
         for (MapObject obj : map.getObjects()) {
-            obj.setXPos(obj.getXPos() + xDelta);
-            obj.setYPos(obj.getYPos() + yDelta);
+            obj.setXPos(obj.getXPos() + xDelta * offset);
+            obj.setYPos(obj.getYPos() + yDelta * offset);
         }
     }
 }

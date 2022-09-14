@@ -41,12 +41,11 @@ public class GameEngine {
         if (controller.getKeys()['s']) {
             controller.setYDelta(controller.getYDelta() - map.getPlayer().getSpeed());
         }
+
+        controller.update(1);
         if (handleCollision()) {
-            System.out.println("Collision yo");
-
+            controller.update(-1);
         }
-
-        controller.update();
     }
 
     public boolean handleCollision() {
@@ -56,8 +55,9 @@ public class GameEngine {
                     player.getXPos() + map.getWidth() - 16 > obj.getXPos() &&
                     player.getXPos() < obj.getXPos() + map.getWidth() - 16 &&
                     player.getYPos() + map.getHeight() > obj.getYPos() &&
-                    player.getYPos() < obj.getYPos() + map.getHeight()/ 2) {
+                    player.getYPos() < obj.getYPos() + map.getHeight() / 2) {
 
+                // TODO id enum
                 switch (obj.getId()) {
                     case 3 -> map.setNextStage(true);
                     case 5 -> map.getPlayer().hit();
