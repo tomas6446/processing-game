@@ -6,6 +6,8 @@
 import Controller.GameEngine;
 import processing.core.PApplet;
 import processing.core.PImage;
+import processing.data.JSONArray;
+import processing.data.JSONObject;
 
 public class Startup extends PApplet {
     private GameEngine engine;
@@ -89,12 +91,30 @@ public class Startup extends PApplet {
                         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                 },
         };
+
+
+        JSONObject json = loadJSONObject("data.json");
+        JSONArray matrix = json.getJSONArray("matrix");
+
+        for (int i = 0; i < matrix.size(); i++) {
+            JSONObject jsonObj = matrix.getJSONObject(i);
+
+            for(int j = 0; j < jsonObj.size(); j++) {
+                JSONArray jsonArray = jsonObj.getJSONArray("level1");
+                System.out.println(jsonArray);
+            }
+
+
+            System.out.println();
+            System.out.println();
+            System.out.println();
+        }
         engine = new GameEngine(spriteSheet, map[STAGE]);
     }
 
     public void draw() {
         clear();
-        if(!engine.getMap().isNextStage()) {
+        if (!engine.getMap().isNextStage()) {
             engine.render(p);
             engine.handleEvent();
         } else {

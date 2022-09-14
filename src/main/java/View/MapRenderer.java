@@ -33,14 +33,8 @@ public class MapRenderer implements Renderer {
 
         /* render player */
         Player player = map.getPlayer();
-        p.rect(
-                player.getXPos(),
-                player.getYPos(),
-                map.getWidth(),
-                map.getHeight()
-        );
-        if(player.isInMotion()) {
-            p.image(player.getSprite()[player.getCurrentDirection()][1 + (int)player.getCurrentFrame()],
+        if (player.isInMotion()) {
+            p.image(player.getSprite()[player.getCurrentDirection()][1 + (int) player.getCurrentFrame()],
                     player.getXPos(),
                     player.getYPos(),
                     map.getWidth(),
