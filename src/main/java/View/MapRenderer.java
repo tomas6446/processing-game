@@ -3,6 +3,7 @@ package View;
 import Model.Map;
 import Model.MapObject;
 import Model.Player;
+import Model.Spell;
 import processing.core.PApplet;
 
 /**
@@ -17,6 +18,7 @@ public class MapRenderer implements Renderer {
 
     @Override
     public void render(PApplet p) {
+        p.clear();
         /* render background */
         p.fill(135, 206, 235); // blue rgb
         p.rect(-2000, -2000, 4000, 4000);
@@ -30,6 +32,17 @@ public class MapRenderer implements Renderer {
                     map.getTileSize()
             );
         }
+
+        /* render spell */
+        for (Spell spell : map.getSpells()) {
+            p.image(spell.getSprite(),
+                    spell.getXPos(),
+                    spell.getYPos(),
+                    map.getTileSize(),
+                    map.getTileSize()
+            );
+        }
+
 
         /* render player */
         Player player = map.getPlayer();

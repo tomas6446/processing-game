@@ -5,24 +5,23 @@ package Model;
  */
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import processing.core.PImage;
 
 @Getter
 @Setter
-public class Player {
-    private final PImage[][] sprite;
+@NoArgsConstructor
+public class Player extends GameElement {
+    private PImage[][] sprite;
     private boolean inMotion;
-    private int currentDirection;
     private double currentFrame;
+    private int currentDirection;
     private int xPos;
     private int yPos;
-
     private int row;
     private int column;
-
     private int speed = 3;
-
     private int hitPoints = 6;
 
     public Player(PImage spriteSheet, int xPos, int yPos, int row, int column) {

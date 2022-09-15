@@ -1,13 +1,17 @@
 package Controller;
 
+import Model.GameElement;
 import Model.Map;
 import Model.MapObject;
 import Model.Player;
+import Model.Spell;
 import View.MapRenderer;
 import View.Renderer;
 import lombok.Getter;
 import processing.core.PApplet;
 import processing.core.PImage;
+
+import java.util.List;
 
 /**
  * @author tomas
@@ -25,7 +29,6 @@ public class GameEngine {
     }
 
     public void handleEvent() {
-        map.getPlayer().updateDirection(controller.getXDelta(), controller.getYDelta());
         controller.setXDelta(0);
         controller.setYDelta(0);
 
@@ -42,30 +45,38 @@ public class GameEngine {
             controller.setYDelta(controller.getYDelta() - map.getPlayer().getSpeed());
         }
 
+        map.getPlayer().updateDirection(controller.getXDelta(), controller.getYDelta());
+        map.getSpells().forEach(Spell::move);
+
         controller.update(1);
-        if (handleCollision()) {
+        if (isCollision(new Player()) || isCollision(new Spell())) {
             controller.update(-1);
         }
     }
 
-    public boolean handleCollision() {
-        Player player = map.getPlayer();
+    public boolean isCollision(GameElement gameElement) {
+        if (gameElement instanceof Player) {
+            Player player = map.getPlayer();
+            return checkCollision(player.getXPos(), player.getYPos());
+        } else if (gameElement instanceof Spell) {
+            List<Spell> spells = map.getSpells();
+            for (int i = 0; i < spells.size(); i++) {
+                if(checkCollision(spells.get(i).getXPos(), spells.get(i).getYPos())) {
+                    spells.remove(i);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkCollision(int xPos, int yPos) {
         for (MapObject obj : map.getObjects()) {
             if (obj.isCollidable() &&
-                    player.getXPos() + map.getTileSize() - 16 > obj.getXPos() &&
-                    player.getXPos() < obj.getXPos() + map.getTileSize() - 16 &&
-                    player.getYPos() + map.getTileSize() > obj.getYPos() &&
-                    player.getYPos() < obj.getYPos() + map.getTileSize() / 2) {
-
-                // TODO id enum
-                switch (obj.getId()) {
-                    case 3 -> map.setNextStage(true);
-                    case 5 -> map.getPlayer().hit();
-                }
-                if (map.getPlayer().getHitPoints() == 0) {
-                    map.setNextStage(true);
-                }
-
+                    xPos + map.getTileSize() - 16 > obj.getXPos() &&
+                    xPos < obj.getXPos() + map.getTileSize() - 16 &&
+                    yPos + map.getTileSize() > obj.getYPos() &&
+                    yPos < obj.getYPos() + map.getTileSize() / 2) {
                 return true;
             }
         }

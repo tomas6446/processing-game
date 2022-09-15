@@ -18,8 +18,8 @@ abstract public class MapObject {
     private boolean collidable;
     private int id;
 
-    public MapObject(PImage sprite, int xPos, int yPos, int width, int height, boolean collidable, int id) {
-        this.sprite = sprite.get(0, 0, width, height);
+    public MapObject(PImage sprite, int xPos, int yPos, boolean collidable, int id) {
+        this.sprite = sprite;
         this.xPos = xPos;
         this.yPos = yPos;
         this.id = id;

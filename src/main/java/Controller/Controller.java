@@ -2,6 +2,7 @@ package Controller;
 
 import Model.Map;
 import Model.MapObject;
+import Model.Spell;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +26,10 @@ public class Controller {
         for (MapObject obj : map.getObjects()) {
             obj.setXPos(obj.getXPos() + xDelta * offset);
             obj.setYPos(obj.getYPos() + yDelta * offset);
+        }
+        for (Spell spell : map.getSpells()) {
+            spell.setXPos(spell.getXPos() + xDelta * offset);
+            spell.setYPos(spell.getYPos() + yDelta * offset);
         }
     }
 }

@@ -12,11 +12,10 @@ import processing.data.JSONObject;
 public class Startup extends PApplet {
     private GameEngine engine;
     private static PApplet p;
-
-    public static int TILES;
     public static int SCREEN_WIDTH;
     public static int SCREEN_HEIGHT;
     private int STAGE = 0;
+    private int STAGE_COUNT;
 
     public static void main(String[] args) {
         PApplet.main("Startup");
@@ -58,10 +57,12 @@ public class Startup extends PApplet {
 
         int[][][] map = new int[matrix.size()][stage.getJSONArray(0).size()][row.size()];
 
+        STAGE_COUNT = matrix.size();
+        int rowCount = stage.getJSONArray(0).size();
         /* read matrix */
         for (int s = 0; s < matrix.size(); s++) {
             stage = matrix.getJSONArray(s);
-            for (int r = 0; r < stage.getJSONArray(0).size(); r++) {
+            for (int r = 0; r < rowCount; r++) {
                 row = stage.getJSONArray(r);
                 for (int c = 0; c < row.size(); c++) {
                     map[s][r][c] = row.getInt(c);
@@ -77,12 +78,15 @@ public class Startup extends PApplet {
     }
 
     public void draw() {
-        clear();
         if (!engine.getMap().isNextStage()) {
-            engine.render(p);
             engine.handleEvent();
+            engine.render(p);
         } else {
-            STAGE++;
+            if(STAGE < STAGE_COUNT - 1) {
+                STAGE++;
+            } else {
+                STAGE = 0;
+            }
             config();
         }
 
