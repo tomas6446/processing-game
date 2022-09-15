@@ -18,16 +18,16 @@ public class Map {
     private Player player;
 
     private boolean nextStage = false;
-    private final int width = 64;
-    private final int height = 64;
+    private int tileSize;
 
-    public Map(PImage[] spriteSheet, int[][] grid) {
+    public Map(PImage[] spriteSheet, int[][] grid, int tileSize) {
+        this.tileSize = tileSize;
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
-                int x = j * width;
-                int y = i * height;
+                int x = j * tileSize;
+                int y = i * tileSize;
 
-                objects.add(new Object(spriteSheet[0], x, y, width, height, false, 0)); /* floor */
+                objects.add(new Object(spriteSheet[0], x, y, tileSize, tileSize, false, 0)); /* floor */
                 if (grid[i][j] != 0) {
                     switch (grid[i][j]) {
                         case 1 -> objects.add(new Object(spriteSheet[1], x, y, 128, 128, true, 1));

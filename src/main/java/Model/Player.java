@@ -21,7 +21,7 @@ public class Player {
     private int row;
     private int column;
 
-    private int speed = 2;
+    private int speed = 3;
 
     private int hitPoints = 6;
 

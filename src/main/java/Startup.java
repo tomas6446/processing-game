@@ -13,10 +13,10 @@ public class Startup extends PApplet {
     private GameEngine engine;
     private static PApplet p;
 
+    public static int TILES;
+    public static int SCREEN_WIDTH;
+    public static int SCREEN_HEIGHT;
     private int STAGE = 0;
-
-    private int[][][] map;
-    private PImage[] spriteSheet;
 
     public static void main(String[] args) {
         PApplet.main("Startup");
@@ -27,13 +27,11 @@ public class Startup extends PApplet {
     }
 
     public void settings() {
-        size(600, 600);
+        config();
+        size(SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
-    public void setup() {
-        frameRate(60);
-
-        // TODO read from json file
+    public void config() {
         PImage[] spriteSheet = {
                 loadImage("stoneTiles.png"), /* floor */
                 loadImage("wall.png"),      /* wall */
@@ -44,72 +42,38 @@ public class Startup extends PApplet {
                 loadImage("healthBar.png"), /* health bar */
         };
 
-        // TODO read from json file
-        // map configuration
-        // 0 - floor
-        // 1 - wall
-        // 2 - enemy
-        // 3 - exit
-        // 4 - player
-        int[][][] map = {
-                {
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 4, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
-                        {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 3},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 2, 1, 0, 3},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 3, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                },
-                {
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                        {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 4, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                },
-        };
-
-
         JSONObject json = loadJSONObject("data.json");
+
+        /* map config variables */
+        JSONObject mapConfig = json.getJSONObject("mapConfig");
+
+        SCREEN_WIDTH = mapConfig.getInt("SCREEN_WIDTH");
+        SCREEN_HEIGHT = mapConfig.getInt("SCREEN_HEIGHT");
+        int TILES = mapConfig.getInt("TILES");
+
+        /* matrix size */
         JSONArray matrix = json.getJSONArray("matrix");
+        JSONArray stage = matrix.getJSONArray(0);
+        JSONArray row = stage.getJSONArray(0);
 
-        for (int i = 0; i < matrix.size(); i++) {
-            JSONObject jsonObj = matrix.getJSONObject(i);
+        int[][][] map = new int[matrix.size()][stage.getJSONArray(0).size()][row.size()];
 
-            for(int j = 0; j < jsonObj.size(); j++) {
-                JSONArray jsonArray = jsonObj.getJSONArray("level1");
-                System.out.println(jsonArray);
+        /* read matrix */
+        for (int s = 0; s < matrix.size(); s++) {
+            stage = matrix.getJSONArray(s);
+            for (int r = 0; r < stage.getJSONArray(0).size(); r++) {
+                row = stage.getJSONArray(r);
+                for (int c = 0; c < row.size(); c++) {
+                    map[s][r][c] = row.getInt(c);
+                }
             }
-
-
-            System.out.println();
-            System.out.println();
-            System.out.println();
         }
-        engine = new GameEngine(spriteSheet, map[STAGE]);
+
+        engine = new GameEngine(spriteSheet, map[STAGE], TILES);
+    }
+
+    public void setup() {
+        frameRate(60);
     }
 
     public void draw() {
@@ -119,7 +83,7 @@ public class Startup extends PApplet {
             engine.handleEvent();
         } else {
             STAGE++;
-            engine = new GameEngine(spriteSheet, map[STAGE]);
+            config();
         }
 
     }

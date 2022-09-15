@@ -18,8 +18,8 @@ public class GameEngine {
     private final Renderer renderer;
     private final Controller controller;
 
-    public GameEngine(PImage[] spriteSheet, int[][] grid) {
-        this.map = new Map(spriteSheet, grid);
+    public GameEngine(PImage[] spriteSheet, int[][] grid, int tileSize) {
+        this.map = new Map(spriteSheet, grid, tileSize);
         this.renderer = new MapRenderer(map);
         this.controller = new Controller(map);
     }
@@ -52,10 +52,10 @@ public class GameEngine {
         Player player = map.getPlayer();
         for (MapObject obj : map.getObjects()) {
             if (obj.isCollidable() &&
-                    player.getXPos() + map.getWidth() - 16 > obj.getXPos() &&
-                    player.getXPos() < obj.getXPos() + map.getWidth() - 16 &&
-                    player.getYPos() + map.getHeight() > obj.getYPos() &&
-                    player.getYPos() < obj.getYPos() + map.getHeight() / 2) {
+                    player.getXPos() + map.getTileSize() - 16 > obj.getXPos() &&
+                    player.getXPos() < obj.getXPos() + map.getTileSize() - 16 &&
+                    player.getYPos() + map.getTileSize() > obj.getYPos() &&
+                    player.getYPos() < obj.getYPos() + map.getTileSize() / 2) {
 
                 // TODO id enum
                 switch (obj.getId()) {

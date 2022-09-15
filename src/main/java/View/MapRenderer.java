@@ -26,8 +26,8 @@ public class MapRenderer implements Renderer {
             p.image(obj.getSprite(),
                     obj.getXPos(),
                     obj.getYPos(),
-                    map.getWidth(),
-                    map.getHeight()
+                    map.getTileSize(),
+                    map.getTileSize()
             );
         }
 
@@ -37,15 +37,15 @@ public class MapRenderer implements Renderer {
             p.image(player.getSprite()[player.getCurrentDirection()][1 + (int) player.getCurrentFrame()],
                     player.getXPos(),
                     player.getYPos(),
-                    map.getWidth(),
-                    map.getHeight()
+                    map.getTileSize(),
+                    map.getTileSize()
             );
         } else {
             p.image(player.getSprite()[player.getCurrentDirection()][0],
                     player.getXPos(),
                     player.getYPos(),
-                    map.getWidth(),
-                    map.getHeight()
+                    map.getTileSize(),
+                    map.getTileSize()
             );
         }
 
@@ -53,8 +53,8 @@ public class MapRenderer implements Renderer {
         p.image(map.getHealthBar().getSprite()[map.getHealthBar().getHealthCount()],
                 0,
                 0,
-                map.getWidth() * 2,
-                map.getHeight() * 2
+                map.getTileSize() * 2,
+                map.getTileSize() * 2
         );
 
     }
