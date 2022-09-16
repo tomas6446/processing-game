@@ -25,4 +25,9 @@ public class Object extends MapObject {
         this.id = id;
         this.collidable = collidable;
     }
+
+    public void update(int xDelta, int yDelta) {
+        xPos += xDelta;
+        yPos += yDelta;
+    }
 }

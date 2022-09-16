@@ -25,4 +25,8 @@ abstract public class MapObject extends GameElement {
         this.id = id;
         this.collidable = collidable;
     }
+
+    public void update(int xDelta, int yDelta) {
+
+    }
 }

@@ -11,7 +11,7 @@ import processing.core.PImage;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Enemy extends GameElement  {
+public class Enemy extends MapObject  {
     private PImage sprite;
     private int xPos;
     private int yPos;
@@ -20,5 +20,10 @@ public class Enemy extends GameElement  {
         this.sprite = sprite;
         this.xPos = xPos;
         this.yPos = yPos;
+    }
+
+    public void update(int xDelta, int yDelta) {
+        xPos += xDelta;
+        yPos += yDelta;
     }
 }

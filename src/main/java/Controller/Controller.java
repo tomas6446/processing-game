@@ -1,8 +1,6 @@
 package Controller;
 
-import Model.Enemy;
 import Model.Map;
-import Model.MapObject;
 import Model.Obstacle;
 import Model.Spell;
 import lombok.Getter;
@@ -25,14 +23,9 @@ public class Controller {
     }
 
     public void update(int offset) {
-        for (MapObject obj : map.getObjects()) {
-            obj.setXPos(obj.getXPos() + xDelta * offset);
-            obj.setYPos(obj.getYPos() + yDelta * offset);
-        }
-        for (Enemy enemy: map.getEnemies()) {
-            enemy.setXPos(enemy.getXPos() + xDelta * offset);
-            enemy.setYPos(enemy.getYPos() + yDelta * offset);
-        }
+        map.getObjects().forEach(object -> object.update(xDelta * offset, yDelta * offset));
+        map.getEnemies().forEach(enemy -> enemy.update(xDelta * offset, yDelta * offset));
+
         for (Obstacle obstacle : map.getObstacles()) {
             for (Spell spell : obstacle.getSpellList()) {
                 spell.setXPos(spell.getXPos() + xDelta * offset);

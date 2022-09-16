@@ -47,10 +47,15 @@ public class GameEngine {
         if (controller.getKeys()['s']) {
             controller.setYDelta(controller.getYDelta() - map.getPlayer().getSpeed());
         }
+
+        update();
+    }
+
+    private void update() {
+        controller.update(1);
+
         map.getPlayer().updateDirection(controller.getXDelta(), controller.getYDelta());
         map.getObstacles().forEach(obstacle -> obstacle.getSpellList().forEach(Spell::move));
-
-        controller.update(1);
         isCollision(new Spell(), new Object());
         if (isCollision(new Spell(), new Player())) {
             map.getHealthBar().removeHealth();
@@ -63,7 +68,6 @@ public class GameEngine {
         }
     }
 
-    // TODO collision
     public boolean isCollision(GameElement a, GameElement b) {
         /* Spell / Player collision with wall */
         if (b instanceof Object) {
