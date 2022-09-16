@@ -11,7 +11,7 @@ import processing.core.PImage;
 @Getter
 @Setter
 @NoArgsConstructor
-abstract public class MapObject {
+abstract public class MapObject extends GameElement {
     private PImage sprite;
     private int xPos;
     private int yPos;

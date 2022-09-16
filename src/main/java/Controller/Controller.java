@@ -27,7 +27,8 @@ public class Controller {
             obj.setXPos(obj.getXPos() + xDelta * offset);
             obj.setYPos(obj.getYPos() + yDelta * offset);
         }
-        for (Spell spell : map.getSpells()) {
+
+        for (Spell spell: map.getSpells()) {
             spell.setXPos(spell.getXPos() + xDelta * offset);
             spell.setYPos(spell.getYPos() + yDelta * offset);
         }

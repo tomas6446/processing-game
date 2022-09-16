@@ -20,4 +20,10 @@ public class HealthBar {
             sprite[i] = spriteSheet.get(i * 70, i, 70, 70);
         }
     }
+
+    public void removeHealth() {
+        if(healthCount > 0) {
+            healthCount--;
+        }
+    }
 }

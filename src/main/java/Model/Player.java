@@ -22,7 +22,6 @@ public class Player extends GameElement {
     private int row;
     private int column;
     private int speed = 3;
-    private int hitPoints = 6;
 
     public Player(PImage spriteSheet, int xPos, int yPos, int row, int column) {
         this.xPos = xPos;
@@ -54,12 +53,6 @@ public class Player extends GameElement {
             currentDirection = 2;
         } else if (yDelta == speed) {
             currentDirection = 0;
-        }
-    }
-
-    public void hit() {
-        if (hitPoints > 0) {
-            hitPoints--;
         }
     }
 }

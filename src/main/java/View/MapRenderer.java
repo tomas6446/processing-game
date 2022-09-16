@@ -43,7 +43,6 @@ public class MapRenderer implements Renderer {
             );
         }
 
-
         /* render player */
         Player player = map.getPlayer();
         if (player.isInMotion()) {

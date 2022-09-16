@@ -1,6 +1,7 @@
 package Model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import processing.core.PImage;
 
@@ -9,8 +10,9 @@ import processing.core.PImage;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class Object extends MapObject {
-    private final PImage sprite;
+    private PImage sprite;
     private int xPos;
     private int yPos;
     private boolean collidable;

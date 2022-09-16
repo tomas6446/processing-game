@@ -3,6 +3,7 @@ package Controller;
 import Model.GameElement;
 import Model.Map;
 import Model.MapObject;
+import Model.Object;
 import Model.Player;
 import Model.Spell;
 import View.MapRenderer;
@@ -10,8 +11,6 @@ import View.Renderer;
 import lombok.Getter;
 import processing.core.PApplet;
 import processing.core.PImage;
-
-import java.util.List;
 
 /**
  * @author tomas
@@ -45,42 +44,72 @@ public class GameEngine {
             controller.setYDelta(controller.getYDelta() - map.getPlayer().getSpeed());
         }
 
+
         map.getPlayer().updateDirection(controller.getXDelta(), controller.getYDelta());
         map.getSpells().forEach(Spell::move);
-
         controller.update(1);
-        if (isCollision(new Player()) || isCollision(new Spell())) {
+
+        isCollision(new Spell(), new Object());
+        if (isCollision(new Spell(), new Player())) {
+            map.getHealthBar().removeHealth();
+            if (map.getHealthBar().getHealthCount() == 0) {
+                map.setNextStage(true);
+            }
+        }
+        if (isCollision(new Player(), new Object())) {
             controller.update(-1);
         }
     }
 
-    public boolean isCollision(GameElement gameElement) {
-        if (gameElement instanceof Player) {
-            Player player = map.getPlayer();
-            return checkCollision(player.getXPos(), player.getYPos());
-        } else if (gameElement instanceof Spell) {
-            List<Spell> spells = map.getSpells();
-            for (int i = 0; i < spells.size(); i++) {
-                if(checkCollision(spells.get(i).getXPos(), spells.get(i).getYPos())) {
-                    spells.remove(i);
-                    return true;
+    // TODO collision
+    public boolean isCollision(GameElement a, GameElement b) {
+        /* Spell / Player collision with wall */
+        if (b instanceof Object) {
+            for (MapObject obj : map.getObjects()) {
+                if (obj.isCollidable()) {
+                    if (a instanceof Player) {
+                        Player player = map.getPlayer();
+                        if (checkCollision(player.getXPos(),
+                                player.getYPos(),
+                                obj.getXPos(),
+                                obj.getYPos())) {
+                            return true;
+                        }
+                    } else if (a instanceof Spell) {
+                        for (int i = 0; i < map.getSpells().size(); i++) {
+                            if (obj.getId() != 2 && checkCollision(map.getSpells().get(i).getXPos(),
+                                    map.getSpells().get(i).getYPos(),
+                                    obj.getXPos(),
+                                    obj.getYPos())) {
+                                map.getSpells().remove(i);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            if (a instanceof Spell && b instanceof Player) {
+                for (int i = 0; i < map.getSpells().size(); i++) {
+                    if (checkCollision(map.getSpells().get(i).getXPos(),
+                            map.getSpells().get(i).getYPos(),
+                            map.getPlayer().getXPos(),
+                            map.getPlayer().getYPos())) {
+                        map.getSpells().remove(i);
+                        return true;
+                    }
                 }
             }
         }
+
         return false;
     }
 
-    private boolean checkCollision(int xPos, int yPos) {
-        for (MapObject obj : map.getObjects()) {
-            if (obj.isCollidable() &&
-                    xPos + map.getTileSize() - 16 > obj.getXPos() &&
-                    xPos < obj.getXPos() + map.getTileSize() - 16 &&
-                    yPos + map.getTileSize() > obj.getYPos() &&
-                    yPos < obj.getYPos() + map.getTileSize() / 2) {
-                return true;
-            }
-        }
-        return false;
+    private boolean checkCollision(int xPos, int yPos, int xPos1, int yPos1) {
+        return xPos + map.getTileSize() - 16 > xPos1 &&
+                xPos < xPos1 + map.getTileSize() - 16 &&
+                yPos + map.getTileSize() > yPos1 &&
+                yPos < yPos1 + map.getTileSize() / 2;
     }
 
     public void render(PApplet p) {
