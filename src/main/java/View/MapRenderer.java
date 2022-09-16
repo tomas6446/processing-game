@@ -1,7 +1,9 @@
 package View;
 
+import Model.Enemy;
 import Model.Map;
 import Model.MapObject;
+import Model.Obstacle;
 import Model.Player;
 import Model.Spell;
 import processing.core.PApplet;
@@ -11,6 +13,9 @@ import processing.core.PApplet;
  */
 public class MapRenderer implements Renderer {
     private final Map map;
+
+    private int lastObstacleSpawn;
+    private final int spawnDeltaTime = 10;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -34,10 +39,27 @@ public class MapRenderer implements Renderer {
         }
 
         /* render spell */
-        for (Spell spell : map.getSpells()) {
-            p.image(spell.getSprite(),
-                    spell.getXPos(),
-                    spell.getYPos(),
+        for (Obstacle obstacle: map.getObstacles()) {
+            if (obstacle.getSpellList().size() < 10 &&
+                    p.millis() - lastObstacleSpawn > spawnDeltaTime) {
+                obstacle.spawnObstacle();
+                lastObstacleSpawn = p.millis();
+            }
+            for (Spell spell : obstacle.getSpellList()) {
+                p.image(spell.getSprite(),
+                        spell.getXPos(),
+                        spell.getYPos(),
+                        map.getTileSize(),
+                        map.getTileSize()
+                );
+            }
+        }
+
+        /* render enemy */
+        for (Enemy enemy: map.getEnemies()) {
+            p.image(enemy.getSprite(),
+                    enemy.getXPos(),
+                    enemy.getYPos(),
                     map.getTileSize(),
                     map.getTileSize()
             );

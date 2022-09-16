@@ -1,7 +1,9 @@
 package Controller;
 
+import Model.Enemy;
 import Model.Map;
 import Model.MapObject;
+import Model.Obstacle;
 import Model.Spell;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,10 +29,17 @@ public class Controller {
             obj.setXPos(obj.getXPos() + xDelta * offset);
             obj.setYPos(obj.getYPos() + yDelta * offset);
         }
-
-        for (Spell spell: map.getSpells()) {
-            spell.setXPos(spell.getXPos() + xDelta * offset);
-            spell.setYPos(spell.getYPos() + yDelta * offset);
+        for (Enemy enemy: map.getEnemies()) {
+            enemy.setXPos(enemy.getXPos() + xDelta * offset);
+            enemy.setYPos(enemy.getYPos() + yDelta * offset);
+        }
+        for (Obstacle obstacle : map.getObstacles()) {
+            for (Spell spell : obstacle.getSpellList()) {
+                spell.setXPos(spell.getXPos() + xDelta * offset);
+                spell.setYPos(spell.getYPos() + yDelta * offset);
+            }
+            obstacle.setXPos(obstacle.getXPos() + xDelta * offset);
+            obstacle.setYPos(obstacle.getYPos() + yDelta * offset);
         }
     }
 }

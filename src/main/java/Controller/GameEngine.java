@@ -1,9 +1,11 @@
 package Controller;
 
+import Model.Enemy;
 import Model.GameElement;
 import Model.Map;
 import Model.MapObject;
 import Model.Object;
+import Model.Obstacle;
 import Model.Player;
 import Model.Spell;
 import View.MapRenderer;
@@ -11,6 +13,8 @@ import View.Renderer;
 import lombok.Getter;
 import processing.core.PApplet;
 import processing.core.PImage;
+
+import java.util.List;
 
 /**
  * @author tomas
@@ -43,12 +47,10 @@ public class GameEngine {
         if (controller.getKeys()['s']) {
             controller.setYDelta(controller.getYDelta() - map.getPlayer().getSpeed());
         }
-
-
         map.getPlayer().updateDirection(controller.getXDelta(), controller.getYDelta());
-        map.getSpells().forEach(Spell::move);
-        controller.update(1);
+        map.getObstacles().forEach(obstacle -> obstacle.getSpellList().forEach(Spell::move));
 
+        controller.update(1);
         isCollision(new Spell(), new Object());
         if (isCollision(new Spell(), new Player())) {
             map.getHealthBar().removeHealth();
@@ -56,7 +58,7 @@ public class GameEngine {
                 map.setNextStage(true);
             }
         }
-        if (isCollision(new Player(), new Object())) {
+        if (isCollision(new Player(), new Object()) || isCollision(new Player(), new Enemy())) {
             controller.update(-1);
         }
     }
@@ -76,27 +78,44 @@ public class GameEngine {
                             return true;
                         }
                     } else if (a instanceof Spell) {
-                        for (int i = 0; i < map.getSpells().size(); i++) {
-                            if (obj.getId() != 2 && checkCollision(map.getSpells().get(i).getXPos(),
-                                    map.getSpells().get(i).getYPos(),
-                                    obj.getXPos(),
-                                    obj.getYPos())) {
-                                map.getSpells().remove(i);
-                                return true;
+                        for (Obstacle obstacle : map.getObstacles()) {
+                            List<Spell> spellList = obstacle.getSpellList();
+                            for (int i = 0; i < spellList.size(); i++) {
+                                if (checkCollision(spellList.get(i).getXPos(),
+                                        spellList.get(i).getYPos(),
+                                        obj.getXPos(),
+                                        obj.getYPos())) {
+                                    spellList.remove(i);
+                                    return true;
+                                }
                             }
                         }
                     }
                 }
             }
+        } else if (a instanceof Player && b instanceof Enemy) {
+            Player player = map.getPlayer();
+            for (Enemy enemy : map.getEnemies()) {
+                if (checkCollision(enemy.getXPos(),
+                        enemy.getYPos(),
+                        player.getXPos(),
+                        player.getYPos())) {
+                    return true;
+                }
+            }
         } else {
             if (a instanceof Spell && b instanceof Player) {
-                for (int i = 0; i < map.getSpells().size(); i++) {
-                    if (checkCollision(map.getSpells().get(i).getXPos(),
-                            map.getSpells().get(i).getYPos(),
-                            map.getPlayer().getXPos(),
-                            map.getPlayer().getYPos())) {
-                        map.getSpells().remove(i);
-                        return true;
+                Player player = map.getPlayer();
+                for (Obstacle obstacle : map.getObstacles()) {
+                    List<Spell> spellList = obstacle.getSpellList();
+                    for (int i = 0; i < spellList.size(); i++) {
+                        if (checkCollision(spellList.get(i).getXPos(),
+                                spellList.get(i).getYPos(),
+                                player.getXPos(),
+                                player.getYPos())) {
+                            obstacle.getSpellList().remove(i);
+                            return true;
+                        }
                     }
                 }
             }
