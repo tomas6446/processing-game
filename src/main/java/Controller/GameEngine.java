@@ -60,7 +60,7 @@ public class GameEngine {
         if (isCollision(new Spell(), new Player())) {
             map.getHealthBar().removeHealth();
             if (map.getHealthBar().getHealthCount() == 0) {
-                map.setNextStage(true);
+                map.setGameOver(true);
             }
         }
         if (isCollision(new Player(), new Object()) || isCollision(new Player(), new Enemy())) {
@@ -77,8 +77,15 @@ public class GameEngine {
                         Player player = map.getPlayer();
                         if (checkCollision(player.getXPos(),
                                 player.getYPos(),
+                                36,
+                                64,
                                 obj.getXPos(),
-                                obj.getYPos())) {
+                                obj.getYPos(),
+                                map.getTileSize(),
+                                map.getTileSize() - 48)) {
+                            if(obj.getId() == 3) {
+                                map.setNextStage(true);
+                            }
                             return true;
                         }
                     } else if (a instanceof Spell) {
@@ -87,8 +94,12 @@ public class GameEngine {
                             for (int i = 0; i < spellList.size(); i++) {
                                 if (checkCollision(spellList.get(i).getXPos(),
                                         spellList.get(i).getYPos(),
+                                        32,
+                                        32,
                                         obj.getXPos(),
-                                        obj.getYPos())) {
+                                        obj.getYPos(),
+                                        map.getTileSize(),
+                                        map.getTileSize())) {
                                     spellList.remove(i);
                                     return true;
                                 }
@@ -100,10 +111,15 @@ public class GameEngine {
         } else if (a instanceof Player && b instanceof Enemy) {
             Player player = map.getPlayer();
             for (Enemy enemy : map.getEnemies()) {
-                if (checkCollision(enemy.getXPos(),
+                if (checkCollision(
+                        enemy.getXPos(),
                         enemy.getYPos(),
+                        64,
+                        64,
                         player.getXPos(),
-                        player.getYPos())) {
+                        player.getYPos(),
+                        36,
+                        64)) {
                     return true;
                 }
             }
@@ -115,8 +131,12 @@ public class GameEngine {
                     for (int i = 0; i < spellList.size(); i++) {
                         if (checkCollision(spellList.get(i).getXPos(),
                                 spellList.get(i).getYPos(),
+                                32,
+                                32 / 2,
                                 player.getXPos(),
-                                player.getYPos())) {
+                                player.getYPos(),
+                                36 / 2,
+                                64)) {
                             obstacle.getSpellList().remove(i);
                             return true;
                         }
@@ -128,11 +148,14 @@ public class GameEngine {
         return false;
     }
 
-    private boolean checkCollision(int xPos, int yPos, int xPos1, int yPos1) {
-        return xPos + map.getTileSize() - 16 > xPos1 &&
-                xPos < xPos1 + map.getTileSize() - 16 &&
-                yPos + map.getTileSize() > yPos1 &&
-                yPos < yPos1 + map.getTileSize() / 2;
+    private boolean checkCollision(int r1x, int r1y,
+                                   int r1w, int r1h,
+                                   int r2x, int r2y,
+                                   int r2w, int r2h) {
+        return r1x + r1w >= r2x &&      // r1 right edge past r2 left
+                r1x <= r2x + r2w &&     // r1 left edge past r2 right
+                r1y + r1h >= r2y &&     // r1 top edge past r2 bottom
+                r1y <= r2y + r2h;       // r1 bottom edge past r2 top
     }
 
     public void render(PApplet p) {

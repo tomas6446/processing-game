@@ -21,10 +21,10 @@ public class Spell extends GameElement {
     private int xDelta;
     private int yDelta;
 
-    public Spell(PImage sprite, int xPos, int yPos, int width, int height, int xDelta, int yDelta) {
-        this.sprite = sprite.get(0, 0, width, height);
-        this.xPos = xPos;
-        this.yPos = yPos;
+    public Spell(PImage sprite, int xPos, int yPos, int xDelta, int yDelta) {
+        this.sprite = sprite.get(64, 64, 128, 128);
+        this.xPos = xPos + 16;
+        this.yPos = yPos + 16;
         this.initialXPos = xPos;
         this.initialYPos = yPos;
         this.xDelta = xDelta;

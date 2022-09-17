@@ -27,13 +27,13 @@ public class Obstacle {
     }
 
     public void spawnObstacle() {
-        spellList.add(new Spell(sprite, xPos, yPos, 256, 256, 0, -1)); /* direction up */
-        spellList.add(new Spell(sprite, xPos, yPos, 256, 256, 1, -1)); /* up right */
-        spellList.add(new Spell(sprite, xPos, yPos, 256, 256, -1, 0)); /* left */
-        spellList.add(new Spell(sprite, xPos, yPos, 256, 256, -1, -1)); /* up left */
-        spellList.add(new Spell(sprite, xPos, yPos, 256, 256, 0, 1));  /* down */
-        spellList.add(new Spell(sprite, xPos, yPos, 256, 256, 1, 1)); /* down right */
-        spellList.add(new Spell(sprite, xPos, yPos, 256, 256, 1, 0)); /* right */
-        spellList.add(new Spell(sprite, xPos, yPos, 256, 256, -1, 1)); /* down left */
+        spellList.add(new Spell(sprite, xPos, yPos, 0, -1)); /* direction up */
+        spellList.add(new Spell(sprite, xPos, yPos, 1, -1)); /* up right */
+        spellList.add(new Spell(sprite, xPos, yPos, -1, 0)); /* left */
+        spellList.add(new Spell(sprite, xPos, yPos, -1, -1)); /* up left */
+        spellList.add(new Spell(sprite, xPos, yPos, 0, 1));  /* down */
+        spellList.add(new Spell(sprite, xPos, yPos, 1, 1)); /* down right */
+        spellList.add(new Spell(sprite, xPos, yPos, 1, 0)); /* right */
+        spellList.add(new Spell(sprite, xPos, yPos, -1, 1)); /* down left */
     }
 }

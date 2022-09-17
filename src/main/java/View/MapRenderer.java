@@ -38,6 +38,24 @@ public class MapRenderer implements Renderer {
             );
         }
 
+        /* render player */
+        Player player = map.getPlayer();
+        if (player.isInMotion()) {
+            p.image(player.getSprite()[player.getCurrentDirection()][1 + (int) player.getCurrentFrame()],
+                    player.getXPos(),
+                    player.getYPos(),
+                    36,
+                    64
+            );
+        } else {
+            p.image(player.getSprite()[player.getCurrentDirection()][0],
+                    player.getXPos(),
+                    player.getYPos(),
+                    36,
+                    64
+            );
+        }
+
         /* render spell */
         for (Obstacle obstacle: map.getObstacles()) {
             if (obstacle.getSpellList().size() < 10 &&
@@ -49,8 +67,8 @@ public class MapRenderer implements Renderer {
                 p.image(spell.getSprite(),
                         spell.getXPos(),
                         spell.getYPos(),
-                        map.getTileSize(),
-                        map.getTileSize()
+                        32,
+                        32
                 );
             }
         }
@@ -60,26 +78,8 @@ public class MapRenderer implements Renderer {
             p.image(enemy.getSprite(),
                     enemy.getXPos(),
                     enemy.getYPos(),
-                    map.getTileSize(),
-                    map.getTileSize()
-            );
-        }
-
-        /* render player */
-        Player player = map.getPlayer();
-        if (player.isInMotion()) {
-            p.image(player.getSprite()[player.getCurrentDirection()][1 + (int) player.getCurrentFrame()],
-                    player.getXPos(),
-                    player.getYPos(),
-                    map.getTileSize(),
-                    map.getTileSize()
-            );
-        } else {
-            p.image(player.getSprite()[player.getCurrentDirection()][0],
-                    player.getXPos(),
-                    player.getYPos(),
-                    map.getTileSize(),
-                    map.getTileSize()
+                    64,
+                    64
             );
         }
 

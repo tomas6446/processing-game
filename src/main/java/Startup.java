@@ -16,6 +16,9 @@ public class Startup extends PApplet {
     public static int SCREEN_HEIGHT;
     private int STAGE = 0;
     private int STAGE_COUNT;
+    private int TILES;
+    private int[][][] map;
+    private PImage[] spriteSheet;
 
     public static void main(String[] args) {
         PApplet.main("Startup");
@@ -31,11 +34,11 @@ public class Startup extends PApplet {
     }
 
     public void config() {
-        PImage[] spriteSheet = {
+        spriteSheet = new PImage[] {
                 loadImage("stoneTiles.png"), /* floor */
                 loadImage("wall.png"),      /* wall */
                 loadImage("dragon.png"),    /* enemy list */
-                loadImage("exit.png"),      /* exit */
+                loadImage("door.png"),      /* exit */
                 loadImage("player.png"),    /* player */
                 loadImage("fireball.png"),  /* enemy spell */
                 loadImage("healthBar.png"), /* health bar */
@@ -48,14 +51,14 @@ public class Startup extends PApplet {
 
         SCREEN_WIDTH = mapConfig.getInt("SCREEN_WIDTH");
         SCREEN_HEIGHT = mapConfig.getInt("SCREEN_HEIGHT");
-        int TILES = mapConfig.getInt("TILES");
+        TILES = mapConfig.getInt("TILES");
 
         /* matrix size */
         JSONArray matrix = json.getJSONArray("matrix");
         JSONArray stage = matrix.getJSONArray(0);
         JSONArray row = stage.getJSONArray(0);
 
-        int[][][] map = new int[matrix.size()][stage.getJSONArray(0).size()][row.size()];
+        map = new int[matrix.size()][stage.getJSONArray(0).size()][row.size()];
 
         STAGE_COUNT = matrix.size();
         int rowCount = stage.getJSONArray(0).size();
@@ -69,25 +72,31 @@ public class Startup extends PApplet {
                 }
             }
         }
-
+    }
+    public void initGame() {
         engine = new GameEngine(spriteSheet, map[STAGE], TILES);
     }
 
     public void setup() {
         frameRate(60);
+        initGame();
     }
 
     public void draw() {
         if (!engine.getMap().isNextStage()) {
             engine.handleEvent();
             engine.render(p);
+            if(engine.getMap().isGameOver()) {
+                STAGE = 0;
+                initGame();
+            }
         } else {
             if(STAGE < STAGE_COUNT - 1) {
                 STAGE++;
             } else {
                 STAGE = 0;
             }
-            config();
+            initGame();
         }
 
     }

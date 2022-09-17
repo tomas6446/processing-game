@@ -33,9 +33,11 @@ public class Player extends GameElement {
     }
 
     private void init(PImage spriteSheet) {
+        int left = 14;
+        int top = 4;
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
-                sprite[j][i] = spriteSheet.get(i * 64, j * 64, 64, 64);
+                sprite[j][i] = spriteSheet.get(i * 64 + left, j * 64 + top, 36, 64);
             }
         }
     }

@@ -19,6 +19,7 @@ public class Map {
     private final HealthBar healthBar;
     private Player player;
     private boolean nextStage = false;
+    private boolean gameOver = false;
     private int tileSize;
 
     public Map(PImage[] spriteSheet, int[][] grid, int tileSize) {
