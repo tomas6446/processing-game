@@ -69,40 +69,41 @@ public class GameEngine {
     }
 
     public boolean isCollision(GameElement a, GameElement b) {
-        /* Spell / Player collision with wall */
-        if (b instanceof Object) {
+        if (a instanceof Player && b instanceof Object) {
             for (MapObject obj : map.getObjects()) {
                 if (obj.isCollidable()) {
-                    if (a instanceof Player) {
-                        Player player = map.getPlayer();
-                        if (checkCollision(player.getXPos(),
-                                player.getYPos(),
-                                36,
-                                64,
-                                obj.getXPos(),
-                                obj.getYPos(),
-                                map.getTileSize(),
-                                map.getTileSize() - 48)) {
-                            if(obj.getId() == 3) {
-                                map.setNextStage(true);
-                            }
-                            return true;
+                    Player player = map.getPlayer();
+                    if (checkCollision(player.getXPos(),
+                            player.getYPos(),
+                            36,
+                            64,
+                            obj.getXPos(),
+                            obj.getYPos(),
+                            map.getTileSize(),
+                            map.getTileSize() - 48)) {
+                        if (obj.getId() == 3) {
+                            map.setNextStage(true);
                         }
-                    } else if (a instanceof Spell) {
-                        for (Obstacle obstacle : map.getObstacles()) {
-                            List<Spell> spellList = obstacle.getSpellList();
-                            for (int i = 0; i < spellList.size(); i++) {
-                                if (checkCollision(spellList.get(i).getXPos(),
-                                        spellList.get(i).getYPos(),
-                                        32,
-                                        32,
-                                        obj.getXPos(),
-                                        obj.getYPos(),
-                                        map.getTileSize(),
-                                        map.getTileSize())) {
-                                    spellList.remove(i);
-                                    return true;
-                                }
+                        return true;
+                    }
+                }
+            }
+        } else if (a instanceof Spell && b instanceof Object) {
+            for (MapObject obj : map.getObjects()) {
+                if (obj.isCollidable()) {
+                    for (Obstacle obstacle : map.getObstacles()) {
+                        List<Spell> spellList = obstacle.getSpellList();
+                        for (int i = 0; i < spellList.size(); i++) {
+                            if (checkCollision(spellList.get(i).getXPos(),
+                                    spellList.get(i).getYPos(),
+                                    32,
+                                    32,
+                                    obj.getXPos(),
+                                    obj.getYPos(),
+                                    map.getTileSize(),
+                                    map.getTileSize())) {
+                                spellList.remove(i);
+                                return true;
                             }
                         }
                     }
@@ -131,12 +132,12 @@ public class GameEngine {
                     for (int i = 0; i < spellList.size(); i++) {
                         if (checkCollision(spellList.get(i).getXPos(),
                                 spellList.get(i).getYPos(),
-                                32,
+                                32 / 2,
                                 32 / 2,
                                 player.getXPos(),
                                 player.getYPos(),
                                 36 / 2,
-                                64)) {
+                                64 / 2)) {
                             obstacle.getSpellList().remove(i);
                             return true;
                         }
