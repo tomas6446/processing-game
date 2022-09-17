@@ -35,4 +35,8 @@ public class Controller {
             obstacle.setYPos(obstacle.getYPos() + yDelta * offset);
         }
     }
+
+    public void center() {
+
+    }
 }

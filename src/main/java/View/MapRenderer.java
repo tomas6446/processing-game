@@ -62,7 +62,7 @@ public class MapRenderer implements Renderer {
     }
     private void renderSpell(PApplet p) {
         for (Obstacle obstacle: map.getObstacles()) {
-            if (obstacle.getSpellList().size() < 10 &&
+            if (obstacle.getSpellList().size() < 2 &&
                     p.millis() - lastObstacleSpawn > spawnDeltaTime) {
                 obstacle.spawnObstacle();
                 lastObstacleSpawn = p.millis();

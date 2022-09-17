@@ -29,6 +29,8 @@ public class GameEngine {
         this.map = new Map(spriteSheet, grid, tileSize);
         this.renderer = new MapRenderer(map);
         this.controller = new Controller(map);
+
+        this.controller.center();
     }
 
     public void handleEvent() {
