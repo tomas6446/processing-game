@@ -1,4 +1,4 @@
-package Model;
+package model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,14 +15,14 @@ public class HealthBar {
     private int healthCount = 6;
 
     public HealthBar(PImage spriteSheet) {
-        this.sprite = new PImage[healthCount+1];
-        for (int i = 0; i < healthCount+1; i++) {
+        this.sprite = new PImage[healthCount + 1];
+        for (int i = 0; i < healthCount + 1; i++) {
             sprite[i] = spriteSheet.get(i * 70, i, 70, 70);
         }
     }
 
     public void removeHealth() {
-        if(healthCount > 0) {
+        if (healthCount > 0) {
             healthCount--;
         }
     }

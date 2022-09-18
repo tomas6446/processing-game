@@ -1,4 +1,4 @@
-package View;
+package view;
 
 import processing.core.PApplet;
 
@@ -6,5 +6,5 @@ import processing.core.PApplet;
  * @author tomas
  */
 public interface Renderer {
-    void render(PApplet p);
+    void render(PApplet pApplet);
 }

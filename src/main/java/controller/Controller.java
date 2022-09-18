@@ -1,8 +1,8 @@
-package Controller;
+package controller;
 
-import Model.Map;
-import Model.Obstacle;
-import Model.Spell;
+import model.Map;
+import model.element.Obstacle;
+import model.element.Spell;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,8 +23,8 @@ public class Controller {
     }
 
     public void update(int offset) {
-        map.getObjects().forEach(object -> object.update(xDelta * offset, yDelta * offset));
-        map.getEnemies().forEach(enemy -> enemy.update(xDelta * offset, yDelta * offset));
+        map.getStaticObjects().forEach(object -> object.move(xDelta * offset, yDelta * offset));
+        map.getEnemies().forEach(enemy -> enemy.move(xDelta * offset, yDelta * offset));
 
         for (Obstacle obstacle : map.getObstacles()) {
             for (Spell spell : obstacle.getSpellList()) {
@@ -37,6 +37,7 @@ public class Controller {
     }
 
     public void center() {
-
+        //map.getObjects().forEach(object -> object.setXPos(object.getXPos() - ((map.getGrid().length * 64) / 2) + map.getPlayer().getXPos() + 36));
+        //map.getObjects().forEach(object -> object.setYPos(object.getYPos() - ((map.getGrid()[0].length * 64) / 2) + map.getPlayer().getYPos() / 2 + 96));
     }
 }

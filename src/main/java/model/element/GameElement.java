@@ -1,8 +1,10 @@
-package Model;
+package model.element;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import model.type.ObjectType;
 import processing.core.PImage;
 
 /**
@@ -11,18 +13,15 @@ import processing.core.PImage;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Enemy extends MapObject  {
+@AllArgsConstructor
+public abstract class GameElement {
+
     private PImage sprite;
+    private ObjectType objectType;
     private int xPos;
     private int yPos;
 
-    public Enemy(PImage sprite, int xPos, int yPos) {
-        this.sprite = sprite;
-        this.xPos = xPos;
-        this.yPos = yPos;
-    }
-
-    public void update(int xDelta, int yDelta) {
+    public void move(int xDelta, int yDelta) {
         xPos += xDelta;
         yPos += yDelta;
     }

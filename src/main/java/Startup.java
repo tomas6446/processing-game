@@ -3,20 +3,21 @@
  */
 
 
-import Controller.GameEngine;
+import controller.GameEngine;
+import model.Map;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
 public class Startup extends PApplet {
+    private static PApplet pApplet;
     private GameEngine engine;
-    private static PApplet p;
-    public static int SCREEN_WIDTH;
-    public static int SCREEN_HEIGHT;
-    private int STAGE = 0;
-    private int STAGE_COUNT;
-    private int TILES;
+    private int screenWidth;
+    private int screenHeight;
+    private int level;
+    private int stageCount;
+    private int tiles;
     private int[][][] map;
     private PImage[] spriteSheet;
 
@@ -25,16 +26,17 @@ public class Startup extends PApplet {
     }
 
     public Startup() {
-        p = this;
+        pApplet = this;
     }
 
+    @Override
     public void settings() {
         config();
-        size(SCREEN_WIDTH, SCREEN_HEIGHT);
+        size(screenWidth, screenHeight);
     }
 
-    public void config() {
-        spriteSheet = new PImage[] {
+    private void config() {
+        spriteSheet = new PImage[]{
                 loadImage("stoneTiles.png"), /* floor */
                 loadImage("wall.png"),      /* wall */
                 loadImage("dragon.png"),    /* enemy list */
@@ -49,9 +51,9 @@ public class Startup extends PApplet {
         /* map config variables */
         JSONObject mapConfig = json.getJSONObject("mapConfig");
 
-        SCREEN_WIDTH = mapConfig.getInt("SCREEN_WIDTH");
-        SCREEN_HEIGHT = mapConfig.getInt("SCREEN_HEIGHT");
-        TILES = mapConfig.getInt("TILES");
+        screenWidth = mapConfig.getInt("SCREEN_WIDTH");
+        screenHeight = mapConfig.getInt("SCREEN_HEIGHT");
+        tiles = mapConfig.getInt("TILES");
 
         /* matrix size */
         JSONArray matrix = json.getJSONArray("matrix");
@@ -60,7 +62,7 @@ public class Startup extends PApplet {
 
         map = new int[matrix.size()][stage.getJSONArray(0).size()][row.size()];
 
-        STAGE_COUNT = matrix.size();
+        stageCount = matrix.size();
         int rowCount = stage.getJSONArray(0).size();
         /* read matrix */
         for (int s = 0; s < matrix.size(); s++) {
@@ -73,38 +75,40 @@ public class Startup extends PApplet {
             }
         }
     }
+
     public void initGame() {
-        engine = new GameEngine(spriteSheet, map[STAGE], TILES);
+        engine = new GameEngine(spriteSheet, map[level], tiles);
     }
 
+    @Override
     public void setup() {
         frameRate(60);
         initGame();
     }
 
+    @Override
     public void draw() {
-        if (!engine.getMap().isNextStage()) {
+        Map engineMap = engine.getMap();
+        if (engineMap.isNextStage()) {
+            level = level < stageCount - 1 ? level + 1 : 0;
+            initGame();
+        } else {
             engine.handleEvent();
-            engine.render(p);
-            if(engine.getMap().isGameOver()) {
-                STAGE = 0;
+            engine.render(pApplet);
+            if (engineMap.isGameOver()) {
+                level = 0;
                 initGame();
             }
-        } else {
-            if(STAGE < STAGE_COUNT - 1) {
-                STAGE++;
-            } else {
-                STAGE = 0;
-            }
-            initGame();
         }
 
     }
 
+    @Override
     public void keyPressed() {
         engine.getController().getKeys()[key] = true;
     }
 
+    @Override
     public void keyReleased() {
         engine.getController().getKeys()[key] = false;
     }

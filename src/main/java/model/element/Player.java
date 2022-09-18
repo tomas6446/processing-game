@@ -1,34 +1,31 @@
-package Model;
-
-/**
- * @author tomas
- */
+package model.element;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import model.type.ObjectType;
 import processing.core.PImage;
 
+/**
+ * @author tomas
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 public class Player extends GameElement {
-    private PImage[][] sprite;
+    private PImage[][] playerSprite;
     private boolean inMotion;
     private double currentFrame;
     private int currentDirection;
-    private int xPos;
-    private int yPos;
     private int row;
     private int column;
     private int speed = 3;
 
     public Player(PImage spriteSheet, int xPos, int yPos, int row, int column) {
-        this.xPos = xPos;
-        this.yPos = yPos;
+        super(spriteSheet, ObjectType.PLAYER, xPos, yPos);
         this.row = row;
         this.column = column;
-        this.sprite = new PImage[column][row];
+        this.playerSprite = new PImage[column][row];
         init(spriteSheet);
     }
 
@@ -37,7 +34,7 @@ public class Player extends GameElement {
         int top = 4;
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
-                sprite[j][i] = spriteSheet.get(i * 64 + left, j * 64 + top, 36, 64);
+                playerSprite[j][i] = spriteSheet.get(i * 64 + left, j * 64 + top, 36, 64);
             }
         }
     }
