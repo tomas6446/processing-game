@@ -9,10 +9,10 @@ import processing.core.PImage;
  * @author tomas
  */
 public class MapRenderer implements Renderer {
-    private static final int SPAWN_DELTA = 15;
+    private static final int SPAWN_DELTA = 10;
     private final Map map;
     private int lastObstacleSpawn;
-    private final int obstacleSpawnCount = 10;
+    private final int obstacleSpawnCount = 2;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -22,32 +22,26 @@ public class MapRenderer implements Renderer {
     public void render(PApplet pApplet) {
         pApplet.clear();
         /* render background */
-        pApplet.fill(135, 206, 235); // blue rgb
-        pApplet.rect(-2000, -2000, 4000, 4000);
-
+        renderSky(pApplet);
         /* render objects */
         renderObjects(pApplet);
-
         /* render enemy */
         renderEnemy(pApplet);
-
         /* render player */
         renderPlayer(pApplet);
-
         /* render spell */
         renderSpell(pApplet);
-
         /* render health bar */
         renderHealthBar(pApplet);
     }
 
     private void renderEnemy(PApplet pApplet) {
         map.getEnemies()
-                .forEach(enemy -> renderImage(pApplet, enemy.getSprite(), enemy.getXPos(), enemy.getYPos(), 64, 64));
+                .forEach(enemy -> renderImage(pApplet, enemy.getTexture().getSprite(), enemy.getXPos(), enemy.getYPos(), enemy.getWidth(), enemy.getHeight()));
     }
 
     private void renderHealthBar(PApplet pApplet) {
-        renderImage(pApplet, map.getHealthBar().getSprite()[map.getHealthBar().getHealthCount()], 0, 0, map.getTileSize() * 2, map.getTileSize() * 2);
+        renderImage(pApplet, map.getHealthBar().getSprite()[map.getHealthBar().getHealthCount()], 0, 0, map.getHealthBar().getWidth(), map.getHealthBar().getHeight());
     }
 
     private void renderSpell(PApplet pApplet) {
@@ -58,7 +52,7 @@ public class MapRenderer implements Renderer {
                         lastObstacleSpawn = pApplet.millis();
                     }
                     obstacle.getSpellList()
-                            .forEach(spell -> renderImage(pApplet, spell.getSprite(), spell.getXPos(), spell.getYPos(), 32, 32));
+                            .forEach(spell -> renderImage(pApplet, spell.getTexture().getSprite(), spell.getXPos(), spell.getYPos(), spell.getWidth(), spell.getHeight()));
                 });
     }
 
@@ -67,15 +61,19 @@ public class MapRenderer implements Renderer {
         PImage[][] playerSprite = player.getPlayerSprite();
         int currentDirection = player.getCurrentDirection();
         if (player.isInMotion()) {
-            renderImage(pApplet, playerSprite[currentDirection][1 + (int) player.getCurrentFrame()], player.getXPos(), player.getYPos(), 36, 64);
+            renderImage(pApplet, playerSprite[currentDirection][1 + (int) player.getCurrentFrame()], player.getXPos(), player.getYPos(), player.getWidth(), player.getHeight());
         } else {
-            renderImage(pApplet, playerSprite[currentDirection][0], player.getXPos(), player.getYPos(), 36, 64);
+            renderImage(pApplet, playerSprite[currentDirection][0], player.getXPos(), player.getYPos(), player.getWidth(), player.getHeight());
         }
     }
 
     private void renderObjects(PApplet pApplet) {
         map.getStaticObjects()
-                .forEach(obj -> renderImage(pApplet, obj.getSprite(), obj.getXPos(), obj.getYPos(), map.getTileSize(), map.getTileSize()));
+                .forEach(obj -> renderImage(pApplet, obj.getTexture().getSprite(), obj.getXPos(), obj.getYPos(), obj.getWidth(), obj.getHeight()));
+    }
+
+    private void renderSky(PApplet pApplet) {
+        renderImage(pApplet, map.getSky().getTexture().getSprite(), map.getSky().getXPos(), map.getSky().getYPos(), map.getSky().getWidth(), map.getSky().getHeight());
     }
 
     private void renderImage(PApplet pApplet, PImage obj, int xPos, int yPos, int width, int height) {

@@ -44,6 +44,7 @@ public class Startup extends PApplet {
                 loadImage("player.png"),    /* player */
                 loadImage("fireball.png"),  /* enemy spell */
                 loadImage("healthBar.png"), /* health bar */
+                loadImage("sky.png")        /* sky */
         };
 
         JSONObject json = loadJSONObject("data.json");

@@ -13,11 +13,15 @@ import processing.core.PImage;
 public class HealthBar {
     private PImage[] sprite;
     private int healthCount = 6;
+    private int width;
+    private int height;
 
-    public HealthBar(PImage spriteSheet) {
+    public HealthBar(PImage sprite, int width, int height) {
         this.sprite = new PImage[healthCount + 1];
+        this.width = width;
+        this.height = height;
         for (int i = 0; i < healthCount + 1; i++) {
-            sprite[i] = spriteSheet.get(i * 70, i, 70, 70);
+            this.sprite[i] = sprite.get(i * 70, i, 70, 70);
         }
     }
 

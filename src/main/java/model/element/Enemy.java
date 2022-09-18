@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import model.type.ObjectType;
-import processing.core.PImage;
 
 /**
  * @author tomas
@@ -14,7 +13,7 @@ import processing.core.PImage;
 @NoArgsConstructor
 public class Enemy extends GameElement {
 
-    public Enemy(PImage sprite, int xPos, int yPos) {
-        super(sprite, ObjectType.ENEMY, xPos, yPos);
+    public Enemy(Texture texture, int xPos, int yPos, int width, int height) {
+        super(texture, ObjectType.ENEMY, xPos, yPos, width, height);
     }
 }

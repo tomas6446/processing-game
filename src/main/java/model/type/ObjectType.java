@@ -10,5 +10,6 @@ public enum ObjectType {
     ENEMY,
     SPELL,
     OBSTACLE,
-    EXIT
+    EXIT,
+    SKY,
 }

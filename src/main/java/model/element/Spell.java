@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import model.type.ObjectType;
-import processing.core.PImage;
 
 /**
  * @author tomas
@@ -14,14 +13,14 @@ import processing.core.PImage;
 @Setter
 @NoArgsConstructor
 public class Spell extends GameElement {
-
     private int initialXPos;
     private int initialYPos;
     private int xDelta;
     private int yDelta;
+    private int speed;
 
-    public Spell(PImage sprite, int xPos, int yPos, int xDelta, int yDelta) {
-        super(sprite.get(64, 64, 128, 128), ObjectType.SPELL, xPos + 16, yPos + 16);
+    public Spell(Texture texture, int xPos, int yPos, int width, int height, int xDelta, int yDelta) {
+        super(texture, ObjectType.SPELL, xPos, yPos, width, height);
         this.initialXPos = xPos;
         this.initialYPos = yPos;
         this.xDelta = xDelta;
@@ -29,9 +28,7 @@ public class Spell extends GameElement {
     }
 
     public void move() {
-        int xPos = getXPos();
-        setXPos(xPos += xDelta);
-        int yPos = getYPos();
-        setYPos(yPos += yDelta);
+        setXPos(getXPos() + xDelta + speed);
+        setYPos(getYPos() + yDelta + speed);
     }
 }

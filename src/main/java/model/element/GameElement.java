@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import model.type.ObjectType;
-import processing.core.PImage;
 
 /**
  * @author tomas
@@ -16,10 +15,12 @@ import processing.core.PImage;
 @AllArgsConstructor
 public abstract class GameElement {
 
-    private PImage sprite;
+    private Texture texture;
     private ObjectType objectType;
     private int xPos;
     private int yPos;
+    private int width;
+    private int height;
 
     public void move(int xDelta, int yDelta) {
         xPos += xDelta;

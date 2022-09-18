@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import model.type.ObjectType;
-import processing.core.PImage;
 
 /**
  * @author tomas
@@ -15,8 +14,8 @@ import processing.core.PImage;
 public class StaticObject extends GameElement {
     private boolean collidable;
 
-    public StaticObject(PImage sprite, int xPos, int yPos, int width, int height, boolean collidable, ObjectType id) {
-        super(sprite.get(0, 0, width, height), id, xPos, yPos);
+    public StaticObject(Texture texture, int xPos, int yPos, int width, int height, boolean collidable, ObjectType id) {
+        super(texture, id, xPos, yPos, width, height);
         this.collidable = collidable;
     }
 }

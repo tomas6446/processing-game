@@ -17,24 +17,28 @@ public class Player extends GameElement {
     private boolean inMotion;
     private double currentFrame;
     private int currentDirection;
+
+    private int width;
+    private int height;
     private int row;
     private int column;
     private int speed = 3;
 
-    public Player(PImage spriteSheet, int xPos, int yPos, int row, int column) {
-        super(spriteSheet, ObjectType.PLAYER, xPos, yPos);
+    public Player(PImage sprite, int top, int left, int width, int height, int xPos, int yPos, int row, int column) {
+        super(new Texture(sprite, top, left, width, height), ObjectType.PLAYER, xPos, yPos, width, height);
+        this.width = width;
+        this.height = height;
         this.row = row;
         this.column = column;
         this.playerSprite = new PImage[column][row];
-        init(spriteSheet);
+        init(sprite);
     }
 
     private void init(PImage spriteSheet) {
-        int left = 14;
-        int top = 4;
+        Texture texture = getTexture();
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
-                playerSprite[j][i] = spriteSheet.get(i * 64 + left, j * 64 + top, 36, 64);
+                playerSprite[j][i] = spriteSheet.get(i * 64 + texture.getTop(), j * 64 + texture.getLeft(), texture.getWidth(), texture.getHeight());
             }
         }
     }
