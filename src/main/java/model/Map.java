@@ -2,12 +2,8 @@ package model;
 
 import lombok.Getter;
 import lombok.Setter;
-import model.element.Enemy;
-import model.element.Texture;
+import model.element.*;
 import model.type.ObjectType;
-import model.element.Obstacle;
-import model.element.Player;
-import model.element.StaticObject;
 import processing.core.PImage;
 
 import java.util.ArrayList;

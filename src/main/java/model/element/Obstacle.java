@@ -13,7 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 public class Obstacle extends GameElement {
-
     private final List<Spell> spellList = new ArrayList<>();
 
     public Obstacle(Texture texture, int xPos, int yPos, int width, int height) {

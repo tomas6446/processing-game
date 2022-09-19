@@ -10,6 +10,10 @@ import processing.core.PImage;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
 
+/**
+ * Reads map configuration json file,
+ * initializes GameEngine.java class
+ **/
 public class Startup extends PApplet {
     private static PApplet pApplet;
     private GameEngine engine;
@@ -94,7 +98,6 @@ public class Startup extends PApplet {
             level = level < stageCount - 1 ? level + 1 : 0;
             initGame();
         } else {
-            engine.handleEvent();
             engine.render(pApplet);
             if (engineMap.isGameOver()) {
                 level = 0;
