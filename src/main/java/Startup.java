@@ -25,12 +25,12 @@ public class Startup extends PApplet {
     private int[][][] map;
     private PImage[] spriteSheet;
 
-    public static void main(String[] args) {
-        PApplet.main("Startup");
-    }
-
     public Startup() {
         pApplet = this;
+    }
+
+    public static void main(String[] args) {
+        PApplet.main("Startup");
     }
 
     @Override
@@ -52,33 +52,28 @@ public class Startup extends PApplet {
         };
 
         JSONObject json = loadJSONObject("data.json");
-
-        /* map config variables */
         JSONObject mapConfig = json.getJSONObject("mapConfig");
-
-        screenWidth = mapConfig.getInt("SCREEN_WIDTH");
-        screenHeight = mapConfig.getInt("SCREEN_HEIGHT");
-        tiles = mapConfig.getInt("TILES");
-
-        /* matrix size */
         JSONArray matrix = json.getJSONArray("matrix");
-        JSONArray stage = matrix.getJSONArray(0);
-        JSONArray row = stage.getJSONArray(0);
+        JSONArray column = matrix.getJSONArray(0);
+        JSONArray row = column.getJSONArray(0);
 
-        map = new int[matrix.size()][stage.getJSONArray(0).size()][row.size()];
+        map = new int[matrix.size()][column.getJSONArray(0).size()][row.size()];
 
-        stageCount = matrix.size();
-        int rowCount = stage.getJSONArray(0).size();
         /* read matrix */
         for (int s = 0; s < matrix.size(); s++) {
-            stage = matrix.getJSONArray(s);
-            for (int r = 0; r < rowCount; r++) {
-                row = stage.getJSONArray(r);
+            column = matrix.getJSONArray(s);
+            for (int r = 0; r < column.size(); r++) {
+                row = column.getJSONArray(r);
                 for (int c = 0; c < row.size(); c++) {
                     map[s][r][c] = row.getInt(c);
                 }
             }
         }
+
+        screenWidth = mapConfig.getInt("SCREEN_WIDTH");
+        screenHeight = mapConfig.getInt("SCREEN_HEIGHT");
+        tiles = mapConfig.getInt("TILES");
+        stageCount = matrix.size();
     }
 
     public void initGame() {
@@ -109,11 +104,15 @@ public class Startup extends PApplet {
 
     @Override
     public void keyPressed() {
-        engine.getController().getKeys()[key] = true;
+        if (engine.getController().isAllowedKey(key)) {
+            engine.getController().getKeys()[key] = true;
+        }
     }
 
     @Override
     public void keyReleased() {
-        engine.getController().getKeys()[key] = false;
+        if (engine.getController().isAllowedKey(key)) {
+            engine.getController().getKeys()[key] = false;
+        }
     }
 }

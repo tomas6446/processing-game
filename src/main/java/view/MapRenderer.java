@@ -11,8 +11,8 @@ import processing.core.PImage;
 public class MapRenderer implements Renderer {
     private static final int SPAWN_DELTA = 10;
     private final Map map;
-    private int lastObstacleSpawn;
     private final int obstacleSpawnCount = 2;
+    private int lastObstacleSpawn;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -73,6 +73,9 @@ public class MapRenderer implements Renderer {
     }
 
     private void renderSky(PApplet pApplet) {
+        pApplet.fill(135, 206, 235); // blue rgb
+        pApplet.rect(-2000, -2000, 4000, 4000);
+
         renderImage(pApplet, map.getSky().getTexture().getSprite(), map.getSky().getXPos(), map.getSky().getYPos(), map.getSky().getWidth(), map.getSky().getHeight());
     }
 

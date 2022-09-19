@@ -4,19 +4,23 @@ import lombok.Getter;
 import lombok.Setter;
 import model.HealthBar;
 import model.Map;
-import model.element.*;
+import model.element.Enemy;
+import model.element.Obstacle;
+import model.element.Player;
+import model.element.Spell;
+import model.element.StaticObject;
 import model.type.ObjectType;
 
 import java.util.List;
 
 /**
  * @author tomas
+ * The controller updates model's state,
+ * handles collision between objects
+ * updates positions,
  */
 @Getter
 @Setter
-/**
- The controller updates model's state, updates positions
- */
 public class Controller {
     private Map map;
     private boolean[] keys;
@@ -42,6 +46,10 @@ public class Controller {
                 spell.setYPos(spell.getYPos() + yDelta * offset);
             });
         });
+    }
+
+    public boolean isAllowedKey(int key) {
+        return key == 'a' || key == 'w' || key == 's' || key == 'd';
     }
 
     public void handleEvent() {
@@ -84,7 +92,24 @@ public class Controller {
     }
 
     public boolean isCollision(Class<?> a, Class<?> b) {
-        if (a.isAssignableFrom(Player.class) && b.isAssignableFrom(StaticObject.class)) {
+        if (!a.isAssignableFrom(Player.class) || !b.isAssignableFrom(StaticObject.class)) {
+            if (a.isAssignableFrom(Spell.class) && b.isAssignableFrom(StaticObject.class)) {
+                List<StaticObject> staticObjects = map.getStaticObjects();
+                return staticObjects.stream().filter(StaticObject::isCollidable)
+                        .anyMatch(staticObject -> map.getObstacles().stream()
+                                .anyMatch(obstacle -> obstacle.getSpellList()
+                                        .removeIf(spell -> checkCollision(spell.getXPos(), spell.getYPos(), spell.getWidth(), spell.getHeight(), staticObject.getXPos(), staticObject.getYPos(), staticObject.getWidth(), staticObject.getHeight() / 2))));
+            } else if (a.isAssignableFrom(Player.class) && b.isAssignableFrom(Enemy.class)) {
+                Player player = map.getPlayer();
+                return map.getEnemies().stream()
+                        .anyMatch(enemy -> checkCollision(enemy.getXPos(), enemy.getYPos(), enemy.getWidth(), enemy.getHeight() / 2, player.getXPos(), player.getYPos(), player.getWidth(), player.getHeight()));
+            } else if (a.isAssignableFrom(Spell.class) && b.isAssignableFrom(Player.class)) {
+                Player player = map.getPlayer();
+                return map.getObstacles().stream()
+                        .anyMatch(obstacle -> obstacle.getSpellList()
+                                .removeIf(spell -> checkCollision(spell.getXPos(), spell.getYPos(), spell.getWidth() / 2, spell.getHeight() / 2, player.getXPos(), player.getYPos(), player.getWidth() / 2, player.getHeight() / 2)));
+            }
+        } else {
             List<StaticObject> staticObjects = map.getStaticObjects();
             for (StaticObject staticObject : staticObjects) {
                 if (staticObject.isCollidable()) {
@@ -97,21 +122,6 @@ public class Controller {
                     }
                 }
             }
-        } else if (a.isAssignableFrom(Spell.class) && b.isAssignableFrom(StaticObject.class)) {
-            List<StaticObject> staticObjects = map.getStaticObjects();
-            return staticObjects.stream().filter(StaticObject::isCollidable).
-                    anyMatch(staticObject -> map.getObstacles().stream().
-                            anyMatch(obstacle -> obstacle.getSpellList().
-                                    removeIf(spell -> checkCollision(spell.getXPos(), spell.getYPos(), 32, 32, staticObject.getXPos(), staticObject.getYPos(), map.getTileSize(), map.getTileSize()))));
-        } else if (a.isAssignableFrom(Player.class) && b.isAssignableFrom(Enemy.class)) {
-            Player player = map.getPlayer();
-            return map.getEnemies().stream()
-                    .anyMatch(enemy -> checkCollision(enemy.getXPos(), enemy.getYPos(), 64, 64 - 48, player.getXPos(), player.getYPos(), 36, 64));
-        } else if (a.isAssignableFrom(Spell.class) && b.isAssignableFrom(Player.class)) {
-            Player player = map.getPlayer();
-            return map.getObstacles().stream().
-                    anyMatch(obstacle -> obstacle.getSpellList().
-                            removeIf(spell -> checkCollision(spell.getXPos(), spell.getYPos(), 32 / 2, 32 / 2, player.getXPos(), player.getYPos(), 36 / 2, 64 / 2)));
         }
         return false;
     }
@@ -126,26 +136,8 @@ public class Controller {
                 r1y <= r2y + r2h;       // r1 bottom edge past r2 top
     }
 
-    // TODO center map to make player at the center
+
     public void center() {
-//        int distanceToCenter = (int) Math.sqrt((300 - map.getPlayer().getYPos()) * (300 - map.getPlayer().getYPos()) + (300 - map.getPlayer().getXPos()) * (300 - map.getPlayer().getXPos()));
-//
-//        map.getStaticObjects().forEach(object -> object.setXPos(object.getXPos() - distanceToCenter));
-//        map.getStaticObjects().forEach(object -> object.setYPos(object.getYPos() - distanceToCenter));
-//        map.getEnemies().forEach(enemy -> enemy.setXPos(enemy.getXPos() - distanceToCenter));
-//        map.getEnemies().forEach(enemy -> enemy.setYPos(enemy.getYPos() - distanceToCenter));
-//        map.getSky().setXPos(map.getSky().getXPos() - distanceToCenter);
-//        map.getSky().setYPos(map.getSky().getYPos() - distanceToCenter);
-//
-//        for (Obstacle obstacle : map.getObstacles()) {
-//            obstacle.setXPos(obstacle.getXPos()- distanceToCenter);
-//            obstacle.setYPos(obstacle.getYPos() - distanceToCenter);
-//
-//            for (Spell spell : obstacle.getSpellList()) {
-//                spell.setXPos(spell.getXPos() - distanceToCenter);
-//                spell.setYPos(spell.getYPos() - distanceToCenter);
-//            }
-//
-//        }
+        /* TODO center map to make player at the center */
     }
 }
