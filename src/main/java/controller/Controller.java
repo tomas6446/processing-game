@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
  * @author tomas
  * The controller updates model's state,
  * handles collision between objects
- * updates positions,
+ * updates positions when there is collision or move event,
  */
 @Getter
 @Setter
@@ -38,8 +38,8 @@ public class Controller {
     }
 
     public void updatePositions(int offset) {
-        map.getStaticObjects().forEach(object -> object.move(xDelta * offset, yDelta * offset));
         map.getEnemies().forEach(enemy -> enemy.move(xDelta * offset, yDelta * offset));
+        map.getStaticObjects().forEach(object -> object.move(xDelta * offset, yDelta * offset));
         map.getPanel().forEach(panel -> panel.move(xDelta * offset, yDelta * offset));
         map.getSky().move(xDelta * offset, yDelta * offset);
 
@@ -81,7 +81,6 @@ public class Controller {
         updatePositions(1);
 
         handlePanelEvents();
-
         if (map.getPlayer() != null) {
             handlePlayerCollision();
         }
@@ -89,6 +88,7 @@ public class Controller {
             handleSpellCollision();
         }
     }
+
     private void handlePanelEvents() {
         if (mouseClicked) {
             IntStream.range(0, map.getPanel().size()).forEachOrdered(i -> {
@@ -107,10 +107,7 @@ public class Controller {
                         int y = i * map.getTileSize() + map.getOffsetY();
                         if (checkCollision(mouseX, mouseY, 1, 1, x, y, map.getTileSize(), map.getTileSize())) {
                             System.out.println("Pressed on: " + i + " ; " + j);
-
-                            map.getGrid()[i][j] = chosenObject.ordinal();
-                            System.out.println(chosenObject.ordinal());
-                            map.addObject(chosenObject, x, y);
+                            map.addObject(chosenObject, x, y, i, j);
                             mouseClicked = false;
                         }
                     }
@@ -130,11 +127,13 @@ public class Controller {
         map.getObstacles().forEach(obstacle -> obstacle.getSpellList().forEach(Spell::move));
 
         isCollision(Spell.class, StaticObject.class);
-        if (isCollision(Spell.class, Player.class)) {
-            HealthBar healthBar = map.getHealthBar();
-            healthBar.removeHealth();
-            if (healthBar.getHealthCount() == 0) {
-                map.setGameOver(true);
+        if(map.getPlayer() != null) {
+            if (isCollision(Spell.class, Player.class)) {
+                HealthBar healthBar = map.getHealthBar();
+                healthBar.removeHealth();
+                if (healthBar.getHealthCount() == 0) {
+                    map.setGameOver(true);
+                }
             }
         }
     }

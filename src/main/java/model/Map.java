@@ -11,6 +11,7 @@ import model.type.ObjectType;
 import processing.core.PImage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class Map {
     private PImage[] spriteSheet;
     private final List<Texture> textures;
     private final List<StaticObject> panel = new ArrayList<>();
-    private final List<StaticObject> staticObjects = new ArrayList<>();
+    private List<StaticObject> staticObjects;
     private HealthBar healthBar;
     private StaticObject sky;
     private List<Obstacle> obstacles = new ArrayList<>();
@@ -31,8 +32,8 @@ public class Map {
     private boolean nextStage = false;
     private boolean gameOver = false;
     private int tileSize;
-    int offsetX = 100;
-    int offsetY = 100;
+    private int offsetX = 100;
+    private int offsetY = 100;
     private int[][] grid;
 
     private static final int PLAYER_WIDTH = 36;
@@ -55,12 +56,14 @@ public class Map {
 
 
     public Map(PImage[] spriteSheet, int[][] grid, int tileSize) {
+        this.staticObjects = Arrays.asList(new StaticObject[grid.length * grid[0].length]);
+
         this.spriteSheet = spriteSheet;
         this.tileSize = tileSize;
         this.grid = grid;
 
-        addObject(ObjectType.SKY, -grid[0].length * tileSize / 2, 0);
-        addObject(ObjectType.HEALTH, 0, 0);
+        addObject(ObjectType.SKY, -grid[0].length * tileSize / 2, 0, 0, 0);
+        addObject(ObjectType.HEALTH, 0, 0, 0, 0);
         this.textures = new ArrayList<>() {{
             add(new Texture(spriteSheet[0], 0, 0, 512, 512));/* tiles */
             add(new Texture(spriteSheet[1], 0, 0, tileSize, tileSize));/* floor */
@@ -81,6 +84,7 @@ public class Map {
         panel.add(new StaticObject(textures.get(1), offsetX * 3, 16, getTileSize(), getTileSize(), false, ObjectType.FLOOR));
         panel.add(new StaticObject(textures.get(2), offsetX * 4, 16, getTileSize(), getTileSize(), false, ObjectType.WALL));
         panel.add(new StaticObject(textures.get(4), offsetX * 5, 16, getTileSize(), getTileSize(), false, ObjectType.EXIT));
+        panel.add(new StaticObject(textures.get(0), offsetX * 6, 16, getTileSize(), getTileSize(), false, ObjectType.TILE));
     }
 
     public void initMap() {
@@ -88,16 +92,16 @@ public class Map {
             for (int j = 0; j < grid[0].length; j++) {
                 int x = j * tileSize + offsetX;
                 int y = i * tileSize + offsetY;
-                addObject(ObjectType.TILE, x, y);
+                addObject(ObjectType.TILE, x, y, i, j);
                 if (grid[i][j] != 0) {
                     switch (grid[i][j]) {
-                        case 1 -> addObject(ObjectType.FLOOR, x, y);
-                        case 2 -> addObject(ObjectType.WALL, x, y);
-                        case 4 -> addObject(ObjectType.EXIT, x, y);
-                        case 5 -> addObject(ObjectType.PLAYER, x, y);
+                        case 1 -> addObject(ObjectType.FLOOR, x, y, i, j);
+                        case 2 -> addObject(ObjectType.WALL, x, y, i, j);
+                        case 4 -> addObject(ObjectType.EXIT, x, y, i, j);
+                        case 5 -> addObject(ObjectType.PLAYER, x, y, i, j);
                         case 3 -> {
-                            addObject(ObjectType.OBSTACLE, x, y);
-                            addObject(ObjectType.ENEMY, x, y);
+                            addObject(ObjectType.OBSTACLE, x, y, i, j);
+                            addObject(ObjectType.ENEMY, x, y, i, j);
                         }
                         default -> throw new IllegalStateException("Unexpected value in the matrix: " + grid[i][j]);
                     }
@@ -106,24 +110,26 @@ public class Map {
         }
     }
 
-    public void addObject(ObjectType type, int x, int y) {
+    public void addObject(ObjectType type, int x, int y, int i, int j) {
+        int index = i + (j * grid[0].length);
         switch (type) {
             case WALL ->
-                    staticObjects.add(new StaticObject(textures.get(2), x, y, WALL_WIDTH, WALL_HEIGHT, true, ObjectType.WALL)); /* wall */
+                    staticObjects.set(index, new StaticObject(textures.get(2), x, y, WALL_WIDTH, WALL_HEIGHT, true, ObjectType.WALL)); /* wall */
             case TILE ->
-                    staticObjects.add(new StaticObject(textures.get(0), x, y, tileSize, tileSize, false, ObjectType.TILE));
+                    staticObjects.set(index, new StaticObject(textures.get(0), x, y, tileSize, tileSize, false, ObjectType.TILE));
             case HEALTH -> healthBar = new HealthBar(spriteSheet[7], BAR_WIDTH, BAR_HEIGHT);
             case FLOOR ->
-                    staticObjects.add(new StaticObject(textures.get(1), x, y, FLOOR_WIDTH, FLOOR_HEIGHT, false, ObjectType.FLOOR)); /* floor */
+                    staticObjects.set(index, new StaticObject(textures.get(1), x, y, FLOOR_WIDTH, FLOOR_HEIGHT, false, ObjectType.FLOOR)); /* floor */
             case PLAYER ->
                     player = new Player(spriteSheet[5], 14, 4, 36, 60, PLAYER_WIDTH, PLAYER_HEIGHT, x, y, 9, 4, SPEED); /* player */
-            case ENEMY -> enemies.add(new Enemy(textures.get(3), x, y, ENEMY_WIDTH, ENEMY_HEIGHT)); /* enemy */
-            case OBSTACLE ->
-                    obstacles.add(new Obstacle(textures.get(6), x, y, OBSTACLE_WIDTH, OBSTACLE_HEIGHT)); /* enemy attacks */
             case EXIT ->
-                    staticObjects.add(new StaticObject(textures.get(4), x, y, EXIT_WIDTH, EXIT_HEIGHT, true, ObjectType.EXIT)); /* exit */
+                    staticObjects.set(index, new StaticObject(textures.get(4), x, y, EXIT_WIDTH, EXIT_HEIGHT, true, ObjectType.EXIT)); /* exit */
             case SKY ->
                     sky = new StaticObject(new Texture(spriteSheet[8], 0, 0, 1920, 1200), -grid[0].length * tileSize / 2, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, false, ObjectType.SKY);
+            case ENEMY -> {
+                enemies.add(new Enemy(textures.get(3), x, y, ENEMY_WIDTH, ENEMY_HEIGHT)); /* enemy */
+                obstacles.add(new Obstacle(textures.get(6), x, y, OBSTACLE_WIDTH, OBSTACLE_HEIGHT)); /* enemy attacks */
+            }
             default -> throw new IllegalStateException("Unexpected type: " + type);
         }
     }
