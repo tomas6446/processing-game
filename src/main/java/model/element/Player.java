@@ -3,7 +3,6 @@ package model.element;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import model.type.ObjectType;
 import processing.core.PImage;
 
 /**
@@ -24,16 +23,17 @@ public class Player extends GameElement {
     private int column;
     private int xPos;
     private int yPos;
-    private int speed = 3;
+    private int speed;
 
 
-    public Player(PImage sprite, int top, int left, int spriteWidth, int spriteHeight, int width, int height, int xPos, int yPos, int row, int column) {
+    public Player(PImage sprite, int top, int left, int spriteWidth, int spriteHeight, int width, int height, int xPos, int yPos, int row, int column, int speed) {
         this.width = width;
         this.height = height;
         this.row = row;
         this.column = column;
         this.xPos = xPos;
         this.yPos = yPos;
+        this.speed = speed;
         this.playerSprite = new PImage[column][row];
         init(sprite, top, left, spriteWidth, spriteHeight, width, height);
     }

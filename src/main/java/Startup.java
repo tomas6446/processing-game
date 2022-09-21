@@ -41,6 +41,7 @@ public class Startup extends PApplet {
 
     private void config() {
         spriteSheet = new PImage[]{
+                loadImage("tile.png"),
                 loadImage("stoneTiles.png"), /* floor */
                 loadImage("wall.png"),      /* wall */
                 loadImage("dragon.png"),    /* enemy list */
@@ -88,7 +89,7 @@ public class Startup extends PApplet {
 
     @Override
     public void draw() {
-        Map engineMap = engine.getMapBuilder().getMap();
+        Map engineMap = engine.getMap();
         if (engineMap.isNextStage()) {
             level = level < stageCount - 1 ? level + 1 : 0;
             initGame();
@@ -99,7 +100,6 @@ public class Startup extends PApplet {
                 initGame();
             }
         }
-
     }
 
     @Override
@@ -114,5 +114,17 @@ public class Startup extends PApplet {
         if (engine.getController().isAllowedKey(key)) {
             engine.getController().getKeys()[key] = false;
         }
+    }
+
+    @Override
+    public void mouseReleased() {
+        engine.getController().setMouseClicked(true);
+        engine.getController().setMouseX(mouseX);
+        engine.getController().setMouseY(mouseY);
+    }
+
+    @Override
+    public void mousePressed() {
+        engine.getController().setMouseClicked(false);
     }
 }

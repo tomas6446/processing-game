@@ -1,9 +1,7 @@
 package view;
 
 import model.Map;
-import model.MapBuilder;
 import model.element.Player;
-import model.element.Texture;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -11,13 +9,13 @@ import processing.core.PImage;
  * @author tomas
  */
 public class MapRenderer implements Renderer {
+    private final Map map;
     private static final int SPAWN_DELTA = 10;
-    private MapBuilder mapBuilder;
     private final int obstacleSpawnCount = 2;
     private int lastObstacleSpawn;
 
-    public MapRenderer(MapBuilder mapBuilder) {
-        this.mapBuilder = mapBuilder;
+    public MapRenderer(Map map) {
+        this.map = map;
     }
 
     @Override
@@ -25,38 +23,43 @@ public class MapRenderer implements Renderer {
         pApplet.clear();
         /* render background */
         renderSky(pApplet);
-        /* render builder */
-        renderBuilder(pApplet);
+        /* render panel */
+        renderPanel(pApplet);
         /* render objects */
         renderObjects(pApplet);
-        /* render enemy */
-        renderEnemy(pApplet);
-        /* render player */
-        renderPlayer(pApplet);
-        /* render spell */
-        renderSpell(pApplet);
-        /* render health bar */
-        renderHealthBar(pApplet);
+
+        if (map.getEnemies() != null) {
+            /* render enemy */
+            renderEnemy(pApplet);
+            /* render spell */
+            renderSpell(pApplet);
+        }
+
+        if (map.getPlayer() != null) {
+            /* render player */
+            renderPlayer(pApplet);
+            /* render health bar */
+            renderHealthBar(pApplet);
+        }
+
     }
 
-    private void renderBuilder(PApplet pApplet) {
-        for (int i = 0; i < 3; i++) {
-            Texture texture = mapBuilder.getMap().getTextures().get(i);
-            pApplet.image(texture.getSprite(), i * 64, 50, 32, 32);
-        }
+    private void renderPanel(PApplet pApplet) {
+        map.getPanel()
+                .forEach(panel -> renderImage(pApplet, panel.getTexture().getSprite(), panel.getXPos(), panel.getYPos(), panel.getWidth(), panel.getHeight()));
     }
 
     private void renderEnemy(PApplet pApplet) {
-        mapBuilder.getMap().getEnemies()
+        map.getEnemies()
                 .forEach(enemy -> renderImage(pApplet, enemy.getTexture().getSprite(), enemy.getXPos(), enemy.getYPos(), enemy.getWidth(), enemy.getHeight()));
     }
 
     private void renderHealthBar(PApplet pApplet) {
-        renderImage(pApplet, mapBuilder.getMap().getHealthBar().getSprite()[mapBuilder.getMap().getHealthBar().getHealthCount()], 0, 0, mapBuilder.getMap().getHealthBar().getWidth(), mapBuilder.getMap().getHealthBar().getHeight());
+        renderImage(pApplet, map.getHealthBar().getSprite()[map.getHealthBar().getHealthCount()], 0, 0, map.getHealthBar().getWidth(), map.getHealthBar().getHeight());
     }
 
     private void renderSpell(PApplet pApplet) {
-        mapBuilder.getMap().getObstacles()
+        map.getObstacles()
                 .forEach(obstacle -> {
                     if (obstacle.getSpellList().size() < obstacleSpawnCount && pApplet.millis() - lastObstacleSpawn > SPAWN_DELTA) {
                         obstacle.spawnObstacle();
@@ -68,7 +71,7 @@ public class MapRenderer implements Renderer {
     }
 
     private void renderPlayer(PApplet pApplet) {
-        Player player = mapBuilder.getMap().getPlayer();
+        Player player = map.getPlayer();
         PImage[][] playerSprite = player.getPlayerSprite();
         int currentDirection = player.getCurrentDirection();
         if (player.isInMotion()) {
@@ -79,7 +82,7 @@ public class MapRenderer implements Renderer {
     }
 
     private void renderObjects(PApplet pApplet) {
-        mapBuilder.getMap().getStaticObjects()
+        map.getStaticObjects()
                 .forEach(obj -> renderImage(pApplet, obj.getTexture().getSprite(), obj.getXPos(), obj.getYPos(), obj.getWidth(), obj.getHeight()));
     }
 
@@ -87,7 +90,7 @@ public class MapRenderer implements Renderer {
         pApplet.fill(135, 206, 235); // blue rgb
         pApplet.rect(-2000, -2000, 4000, 4000);
 
-        renderImage(pApplet, mapBuilder.getMap().getSky().getTexture().getSprite(), mapBuilder.getMap().getSky().getXPos(), mapBuilder.getMap().getSky().getYPos(), mapBuilder.getMap().getSky().getWidth(), mapBuilder.getMap().getSky().getHeight());
+        renderImage(pApplet, map.getSky().getTexture().getSprite(), map.getSky().getXPos(), map.getSky().getYPos(), map.getSky().getWidth(), map.getSky().getHeight());
     }
 
     private void renderImage(PApplet pApplet, PImage obj, int xPos, int yPos, int width, int height) {

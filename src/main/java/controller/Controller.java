@@ -12,6 +12,7 @@ import model.element.StaticObject;
 import model.type.ObjectType;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * @author tomas
@@ -26,6 +27,10 @@ public class Controller {
     private boolean[] keys;
     private int xDelta;
     private int yDelta;
+    private ObjectType chosenObject;
+    private boolean mouseClicked;
+    private int mouseX;
+    private int mouseY;
 
     public Controller(Map map) {
         this.map = map;
@@ -35,7 +40,11 @@ public class Controller {
     public void updatePositions(int offset) {
         map.getStaticObjects().forEach(object -> object.move(xDelta * offset, yDelta * offset));
         map.getEnemies().forEach(enemy -> enemy.move(xDelta * offset, yDelta * offset));
+        map.getPanel().forEach(panel -> panel.move(xDelta * offset, yDelta * offset));
         map.getSky().move(xDelta * offset, yDelta * offset);
+
+        map.setOffsetX(map.getOffsetX() + xDelta * offset);
+        map.setOffsetY(map.getOffsetY() + yDelta * offset);
 
         List<Obstacle> obstacles = map.getObstacles();
         obstacles.forEach(obstacle -> {
@@ -57,25 +66,67 @@ public class Controller {
         yDelta = 0;
 
         if (keys['a']) {
-            xDelta += map.getPlayer().getSpeed();
+            xDelta += Map.SPEED;
         }
         if (keys['w']) {
-            yDelta += map.getPlayer().getSpeed();
+            yDelta += Map.SPEED;
         }
         if (keys['d']) {
-            xDelta -= map.getPlayer().getSpeed();
+            xDelta -= Map.SPEED;
         }
         if (keys['s']) {
-            yDelta -= map.getPlayer().getSpeed();
+            yDelta -= Map.SPEED;
         }
 
-        handleCollision();
-    }
-
-    private void handleCollision() {
         updatePositions(1);
 
+        handlePanelEvents();
+
+        if (map.getPlayer() != null) {
+            handlePlayerCollision();
+        }
+        if (map.getObstacles() != null) {
+            handleSpellCollision();
+        }
+    }
+    private void handlePanelEvents() {
+        if (mouseClicked) {
+            IntStream.range(0, map.getPanel().size()).forEachOrdered(i -> {
+                int x = (i + 1) * map.getOffsetX();
+                int y = 16;
+                if (checkCollision(mouseX, mouseY, 1, 1, x, y, map.getTileSize(), map.getTileSize())) {
+                    chosenObject = map.getPanel().get(i).getObjectType();
+                    System.out.println(chosenObject);
+                    mouseClicked = false;
+                }
+            });
+            if (chosenObject != null) {
+                for (int i = 0; i < map.getGrid().length; i++) {
+                    for (int j = 0; j < map.getGrid()[0].length; j++) {
+                        int x = j * map.getTileSize() + map.getOffsetX();
+                        int y = i * map.getTileSize() + map.getOffsetY();
+                        if (checkCollision(mouseX, mouseY, 1, 1, x, y, map.getTileSize(), map.getTileSize())) {
+                            System.out.println("Pressed on: " + i + " ; " + j);
+
+                            map.getGrid()[i][j] = chosenObject.ordinal();
+                            System.out.println(chosenObject.ordinal());
+                            map.addObject(chosenObject, x, y);
+                            mouseClicked = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void handlePlayerCollision() {
         map.getPlayer().updateDirection(getXDelta(), getYDelta());
+        if (isCollision(Player.class, StaticObject.class) || isCollision(Player.class, Enemy.class)) {
+            updatePositions(-1);
+        }
+    }
+
+    private void handleSpellCollision() {
         map.getObstacles().forEach(obstacle -> obstacle.getSpellList().forEach(Spell::move));
 
         isCollision(Spell.class, StaticObject.class);
@@ -85,9 +136,6 @@ public class Controller {
             if (healthBar.getHealthCount() == 0) {
                 map.setGameOver(true);
             }
-        }
-        if (isCollision(Player.class, StaticObject.class) || isCollision(Player.class, Enemy.class)) {
-            updatePositions(-1);
         }
     }
 
