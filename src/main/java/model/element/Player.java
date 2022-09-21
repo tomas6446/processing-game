@@ -22,23 +22,26 @@ public class Player extends GameElement {
     private int height;
     private int row;
     private int column;
+    private int xPos;
+    private int yPos;
     private int speed = 3;
 
-    public Player(PImage sprite, int top, int left, int width, int height, int xPos, int yPos, int row, int column) {
-        super(new Texture(sprite, top, left, width, height), ObjectType.PLAYER, xPos, yPos, width, height);
+
+    public Player(PImage sprite, int top, int left, int spriteWidth, int spriteHeight, int width, int height, int xPos, int yPos, int row, int column) {
         this.width = width;
         this.height = height;
         this.row = row;
         this.column = column;
+        this.xPos = xPos;
+        this.yPos = yPos;
         this.playerSprite = new PImage[column][row];
-        init(sprite);
+        init(sprite, top, left, spriteWidth, spriteHeight, width, height);
     }
 
-    private void init(PImage spriteSheet) {
-        Texture texture = getTexture();
+    private void init(PImage spriteSheet, int top, int left, int spriteWidth, int spriteHeight, int width, int height) {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
-                playerSprite[j][i] = spriteSheet.get(i * 64 + texture.getTop(), j * 64 + texture.getLeft(), texture.getWidth(), texture.getHeight());
+                playerSprite[j][i] = spriteSheet.get(i * 64 + top, j * 64 + left, spriteWidth, spriteHeight);
             }
         }
     }

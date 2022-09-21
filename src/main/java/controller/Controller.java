@@ -114,7 +114,7 @@ public class Controller {
             for (StaticObject staticObject : staticObjects) {
                 if (staticObject.isCollidable()) {
                     Player player = map.getPlayer();
-                    if (checkCollision(player.getXPos(), player.getYPos(), 36, 64, staticObject.getXPos(), staticObject.getYPos(), map.getTileSize(), map.getTileSize() - 48)) {
+                    if (checkCollision(player.getXPos(), player.getYPos(), player.getWidth(), player.getHeight(), staticObject.getXPos(), staticObject.getYPos(), map.getTileSize(), map.getTileSize() / 2)) {
                         if (staticObject.getObjectType() == ObjectType.EXIT) {
                             map.setNextStage(true);
                         }

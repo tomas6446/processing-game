@@ -88,7 +88,7 @@ public class Startup extends PApplet {
 
     @Override
     public void draw() {
-        Map engineMap = engine.getMap();
+        Map engineMap = engine.getMapBuilder().getMap();
         if (engineMap.isNextStage()) {
             level = level < stageCount - 1 ? level + 1 : 0;
             initGame();

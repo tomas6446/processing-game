@@ -2,6 +2,7 @@ package controller;
 
 import lombok.Getter;
 import model.Map;
+import model.MapBuilder;
 import processing.core.PApplet;
 import processing.core.PImage;
 import view.MapRenderer;
@@ -12,14 +13,14 @@ import view.Renderer;
  */
 @Getter
 public class GameEngine {
-    private final Map map;
+    private final MapBuilder mapBuilder;
     private final Renderer renderer;
     private final Controller controller;
 
     public GameEngine(PImage[] spriteSheet, int[][] grid, int tileSize) {
-        this.map = new Map(spriteSheet, grid, tileSize);
-        this.renderer = new MapRenderer(map);
-        this.controller = new Controller(map);
+        this.mapBuilder = new MapBuilder(new Map(spriteSheet, grid, tileSize));
+        this.renderer = new MapRenderer(mapBuilder);
+        this.controller = new Controller(mapBuilder.getMap());
 
         this.controller.center();
     }
