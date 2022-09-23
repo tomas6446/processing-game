@@ -17,16 +17,16 @@ public class Player extends GameElement {
     private double currentFrame;
     private int currentDirection;
 
-    private int width;
-    private int height;
     private int row;
     private int column;
     private int xPos;
     private int yPos;
+    private int width;
+    private int height;
     private int speed;
 
 
-    public Player(PImage sprite, int top, int left, int spriteWidth, int spriteHeight, int width, int height, int xPos, int yPos, int row, int column, int speed) {
+    public Player(Texture texture, int xPos, int yPos, int width, int height, int row, int column, int speed) {
         this.width = width;
         this.height = height;
         this.row = row;
@@ -35,7 +35,7 @@ public class Player extends GameElement {
         this.yPos = yPos;
         this.speed = speed;
         this.playerSprite = new PImage[column][row];
-        init(sprite, top, left, spriteWidth, spriteHeight);
+        init(texture.getSprite(), texture.getTop(), texture.getLeft(), texture.getWidth(), texture.getHeight());
     }
 
     private void init(PImage spriteSheet, int top, int left, int spriteWidth, int spriteHeight) {

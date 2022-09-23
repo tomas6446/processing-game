@@ -45,12 +45,12 @@ public class MapRenderer implements Renderer {
 
     private void renderPanel(PApplet pApplet) {
         map.getPanel()
-                .forEach(panel -> renderImage(pApplet, panel.getTexture().sprite(), panel.getXPos(), panel.getYPos(), panel.getWidth(), panel.getHeight()));
+                .forEach(panel -> renderImage(pApplet, panel.getTexture().getSprite(), panel.getXPos(), panel.getYPos(), panel.getWidth(), panel.getHeight()));
     }
 
     private void renderEnemy(PApplet pApplet) {
         map.getEnemies()
-                .forEach(enemy -> renderImage(pApplet, enemy.getTexture().sprite(), enemy.getXPos(), enemy.getYPos(), enemy.getWidth(), enemy.getHeight()));
+                .forEach(enemy -> renderImage(pApplet, enemy.getTexture().getSprite(), enemy.getXPos(), enemy.getYPos(), enemy.getWidth(), enemy.getHeight()));
     }
 
     private void renderHealthBar(PApplet pApplet) {
@@ -64,7 +64,7 @@ public class MapRenderer implements Renderer {
                         obstacle.spawnObstacle();
                         obstacle.setLastObstacleSpawn(pApplet.millis());
                     }
-                    obstacle.getSpellList().forEach(spell -> renderImage(pApplet, spell.getTexture().sprite(), spell.getXPos(), spell.getYPos(), spell.getWidth(), spell.getHeight()));
+                    obstacle.getSpellList().forEach(spell -> renderImage(pApplet, spell.getTexture().getSprite(), spell.getXPos(), spell.getYPos(), spell.getWidth(), spell.getHeight()));
                 });
     }
 
@@ -81,14 +81,14 @@ public class MapRenderer implements Renderer {
 
     private void renderObjects(PApplet pApplet) {
         map.getStaticObjects()
-                .forEach(obj -> renderImage(pApplet, obj.getTexture().sprite(), obj.getXPos(), obj.getYPos(), obj.getWidth(), obj.getHeight()));
+                .forEach(obj -> renderImage(pApplet, obj.getTexture().getSprite(), obj.getXPos(), obj.getYPos(), obj.getWidth(), obj.getHeight()));
     }
 
     private void renderSky(PApplet pApplet) {
         pApplet.fill(135, 206, 235); // blue rgb
         pApplet.rect(-2000, -2000, 4000, 4000);
 
-        renderImage(pApplet, map.getSky().getTexture().sprite(), map.getSky().getXPos(), map.getSky().getYPos(), map.getSky().getWidth(), map.getSky().getHeight());
+        renderImage(pApplet, map.getSky().getTexture().getSprite(), map.getSky().getXPos(), map.getSky().getYPos(), map.getSky().getWidth(), map.getSky().getHeight());
     }
 
     private void renderImage(PApplet pApplet, PImage obj, int xPos, int yPos, int width, int height) {

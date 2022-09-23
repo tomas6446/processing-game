@@ -176,8 +176,8 @@ public class Controller {
     }
 
     /* method updates every object on the map, depending on offset
-    * 1 - map moves forward
-    * -1 - map moves backwards */
+     * 1 - map moves forward
+     * -1 - map moves backwards */
     private void updatePositions(int offset) {
         map.getEnemies().forEach(enemy -> enemy.move(xDelta * offset, yDelta * offset));
         map.getStaticObjects().forEach(object -> object.move(xDelta * offset, yDelta * offset));
