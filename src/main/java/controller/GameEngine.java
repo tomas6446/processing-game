@@ -9,6 +9,7 @@ import view.Renderer;
 
 /**
  * @author tomas
+ * Is responsible for telling the MapRenderer what to render
  */
 @Getter
 public class GameEngine {
@@ -20,8 +21,6 @@ public class GameEngine {
         this.map = new Map(spriteSheet, grid, tileSize);
         this.renderer = new MapRenderer(map);
         this.controller = new Controller(map);
-
-        this.controller.center();
     }
 
     public void render(PApplet pApplet) {
