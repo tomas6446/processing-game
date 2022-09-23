@@ -8,6 +8,7 @@ import model.element.StaticObject;
 import model.element.Texture;
 import model.element.Wave;
 import model.type.ObjectType;
+import processing.core.PImage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,8 +59,8 @@ public class Map {
     private StaticObject sky;
 
     public Map(List<Texture> textures, int[][] grid, int tileSize) {
-        this.textures = textures;
         this.staticObjects = Arrays.asList(new StaticObject[grid.length * grid[0].length]);
+        this.textures = textures;
         this.tileSize = tileSize;
         this.grid = grid;
 
@@ -71,7 +72,10 @@ public class Map {
     }
 
     public void initPanel() {
-        panel.add(new StaticObject(textures.get(5), offsetX, 16, getTileSize(), getTileSize(), false, ObjectType.PLAYER));
+        PImage playerSprite = textures.get(5).getSprite().get(14, 4, 36, 60);
+        Texture playerTexture = new Texture(playerSprite, 14, 4, 35, 60);
+
+        panel.add(new StaticObject(playerTexture, offsetX, 16, getTileSize(), getTileSize(), false, ObjectType.PLAYER));
         panel.add(new StaticObject(textures.get(3), offsetX * 2, 16, getTileSize(), getTileSize(), false, ObjectType.ENEMY));
         panel.add(new StaticObject(textures.get(1), offsetX * 3, 16, getTileSize(), getTileSize(), false, ObjectType.FLOOR));
         panel.add(new StaticObject(textures.get(2), offsetX * 4, 16, getTileSize(), getTileSize(), false, ObjectType.WALL));
@@ -96,8 +100,7 @@ public class Map {
                             addObject(ObjectType.OBSTACLE, x, y, i, j);
                             addObject(ObjectType.ENEMY, x, y, i, j);
                         }
-                        default ->
-                                throw new IllegalStateException("Unexpected value in the matrix: " + grid[i][j]);
+                        default -> throw new IllegalStateException("Unexpected value in the matrix: " + grid[i][j]);
                     }
                 }
             }
@@ -112,19 +115,18 @@ public class Map {
                     staticObjects.set(index, new StaticObject(textures.get(2), x, y, WALL_WIDTH, WALL_HEIGHT, true, ObjectType.WALL)); /* wall */
             case TILE ->
                     staticObjects.set(index, new StaticObject(textures.get(0), x, y, tileSize, tileSize, false, ObjectType.TILE));
-            case HEALTH ->
-                    healthBar = new HealthBar(textures.get(7), BAR_WIDTH, BAR_HEIGHT);
+            case HEALTH -> healthBar = new HealthBar(textures.get(7), BAR_WIDTH, BAR_HEIGHT);
             case FLOOR ->
                     staticObjects.set(index, new StaticObject(textures.get(1), x, y, FLOOR_WIDTH, FLOOR_HEIGHT, false, ObjectType.FLOOR)); /* floor */
             case PLAYER ->
-                    player = new Player(textures.get(5), x, y, PLAYER_WIDTH, PLAYER_HEIGHT, 9, 4, SPEED); /* player */
+                    player = new Player(textures.get(5), x + tileSize / 2 - PLAYER_WIDTH / 2, y + tileSize / 2 - PLAYER_HEIGHT / 2, PLAYER_WIDTH, PLAYER_HEIGHT, 9, 4, SPEED); /* player */
             case EXIT ->
                     staticObjects.set(index, new StaticObject(textures.get(4), x, y, EXIT_WIDTH, EXIT_HEIGHT, true, ObjectType.EXIT)); /* exit */
             case SKY ->
                     sky = new StaticObject(textures.get(8), -grid[0].length * tileSize / 2, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, false, ObjectType.SKY);
             case ENEMY -> {
                 enemies.add(new Enemy(textures.get(3), x, y, ENEMY_WIDTH, ENEMY_HEIGHT)); /* enemy */
-                waves.add(new Wave(textures.get(6), x, y, OBSTACLE_WIDTH, OBSTACLE_HEIGHT)); /* enemy attacks */
+                waves.add(new Wave(textures.get(6), x + tileSize / 2 - OBSTACLE_WIDTH / 2, y + tileSize / 2 - OBSTACLE_HEIGHT / 2, OBSTACLE_WIDTH, OBSTACLE_HEIGHT)); /* enemy attacks */
             }
             default -> throw new IllegalStateException("Unexpected type: " + type);
         }

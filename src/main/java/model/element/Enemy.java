@@ -12,7 +12,6 @@ import model.type.ObjectType;
 @Setter
 @NoArgsConstructor
 public class Enemy extends GameElement {
-
     public Enemy(Texture texture, int xPos, int yPos, int width, int height) {
         super(texture, ObjectType.ENEMY, xPos, yPos, width, height);
     }

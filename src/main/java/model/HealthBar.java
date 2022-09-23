@@ -5,6 +5,8 @@ import lombok.Setter;
 import model.element.Texture;
 import processing.core.PImage;
 
+import java.util.stream.IntStream;
+
 /**
  * @author tomas
  */
@@ -21,9 +23,9 @@ public class HealthBar {
         this.sprite = new PImage[healthCount + 1];
         this.width = width;
         this.height = height;
-        for (int i = 0; i < healthCount + 1; i++) {
-            this.sprite[i] = texture.getSprite().get(i * texture.getWidth(), i, texture.getWidth(), texture.getHeight());
-        }
+        IntStream.range(0, healthCount + 1)
+                .forEachOrdered(i -> this.sprite[i] = texture.getSprite()
+                        .get(i * texture.getWidth(), 0, texture.getWidth(), texture.getHeight()));
     }
 
     public void removeHealth() {

@@ -9,7 +9,7 @@ import model.type.ObjectType;
 /**
  * @author tomas
  * Holds object texture, type, position, width, height, as well as move method
- * to move every object on the map if played collided
+ * to move every object on the map if player collided
  */
 @Getter
 @Setter

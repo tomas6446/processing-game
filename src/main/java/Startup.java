@@ -81,15 +81,15 @@ public class Startup extends PApplet {
                 loadImage("sky.png")        /* sky */};
 
         textures = new ArrayList<>() {{
-            add(new Texture(sprite[0], 0, 0, 512, 512, true));/* tiles */
-            add(new Texture(sprite[1], 0, 0, tiles, tiles, true));/* floor */
-            add(new Texture(sprite[2], 0, 0, 128, 128, true));  /* wall */
-            add(new Texture(sprite[3], 0, 0, 118, 118, true)); /* enemy */
-            add(new Texture(sprite[4], 0, 0, 64, 96, true)); /* exit */
-            add(new Texture(sprite[5], 14, 4, 36, 60, false)); /* player */
-            add(new Texture(sprite[6], 64, 64, 128, 128, true)); /* spell */
-            add(new Texture(sprite[7], 0, 0, 70, 33, false)); /* health bar */
-            add(new Texture(sprite[8], 0, 0, 1920, 1200, true)); /* sky */
+            add(new Texture(sprite[0], 0, 0, 512, 512));/* tiles */
+            add(new Texture(sprite[1], 0, 0, tiles, tiles));/* floor */
+            add(new Texture(sprite[2], 0, 0, 128, 128));  /* wall */
+            add(new Texture(sprite[3], 0, 0, 118, 118)); /* enemy */
+            add(new Texture(sprite[4], 0, 0, 64, 96)); /* exit */
+            add(new Texture(sprite[5], 14, 4, 36, 60)); /* player */
+            add(new Texture(sprite[6], 64, 64, 128, 128)); /* spell */
+            add(new Texture(sprite[7], 0, 0, 70, 70)); /* health bar */
+            add(new Texture(sprite[8], 0, 0, 1920, 1200)); /* sky */
         }};
     }
 
