@@ -35,10 +35,10 @@ public class Player extends GameElement {
         this.yPos = yPos;
         this.speed = speed;
         this.playerSprite = new PImage[column][row];
-        init(sprite, top, left, spriteWidth, spriteHeight, width, height);
+        init(sprite, top, left, spriteWidth, spriteHeight);
     }
 
-    private void init(PImage spriteSheet, int top, int left, int spriteWidth, int spriteHeight, int width, int height) {
+    private void init(PImage spriteSheet, int top, int left, int spriteWidth, int spriteHeight) {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < column; j++) {
                 playerSprite[j][i] = spriteSheet.get(i * 64 + top, j * 64 + left, spriteWidth, spriteHeight);

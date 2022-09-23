@@ -5,10 +5,10 @@ import lombok.Setter;
 import model.HealthBar;
 import model.Map;
 import model.element.Enemy;
-import model.element.Obstacle;
 import model.element.Player;
 import model.element.Spell;
 import model.element.StaticObject;
+import model.element.Wave;
 import model.type.ObjectType;
 
 import java.util.List;
@@ -37,26 +37,6 @@ public class Controller {
         this.keys = new boolean[128];
     }
 
-    public void updatePositions(int offset) {
-        map.getEnemies().forEach(enemy -> enemy.move(xDelta * offset, yDelta * offset));
-        map.getStaticObjects().forEach(object -> object.move(xDelta * offset, yDelta * offset));
-        map.getPanel().forEach(panel -> panel.move(xDelta * offset, yDelta * offset));
-        map.getSky().move(xDelta * offset, yDelta * offset);
-
-        map.setOffsetX(map.getOffsetX() + xDelta * offset);
-        map.setOffsetY(map.getOffsetY() + yDelta * offset);
-
-        List<Obstacle> obstacles = map.getObstacles();
-        obstacles.forEach(obstacle -> {
-            obstacle.setXPos(obstacle.getXPos() + xDelta * offset);
-            obstacle.setYPos(obstacle.getYPos() + yDelta * offset);
-            obstacle.getSpellList().forEach(spell -> {
-                spell.setXPos(spell.getXPos() + xDelta * offset);
-                spell.setYPos(spell.getYPos() + yDelta * offset);
-            });
-        });
-    }
-
     public boolean isAllowedKey(int key) {
         return key == 'a' || key == 'w' || key == 's' || key == 'd';
     }
@@ -79,28 +59,30 @@ public class Controller {
         }
 
         updatePositions(1);
-
-        handlePanelEvents();
+        if (map.getPanel() != null) {
+            handlePanelEvents();
+        }
         if (map.getPlayer() != null) {
             handlePlayerCollision();
         }
-        if (map.getObstacles() != null) {
+        if (map.getWaves() != null) {
             handleSpellCollision();
         }
     }
 
     private void handlePanelEvents() {
         if (mouseClicked) {
+            /* from 0 to panel size, find if user clicked on the object stored in the panel list */
             IntStream.range(0, map.getPanel().size()).forEachOrdered(i -> {
-                int x = (i + 1) * map.getOffsetX();
-                int y = 16;
-                if (checkCollision(mouseX, mouseY, 1, 1, x, y, map.getTileSize(), map.getTileSize())) {
+                if (checkCollision(mouseX, mouseY, 1, 1, map.getPanel().get(i).getXPos(), map.getPanel().get(i).getYPos(), map.getTileSize(), map.getTileSize())) {
+                    /* store the object that was clicked in the separate variable */
                     chosenObject = map.getPanel().get(i).getObjectType();
                     System.out.println(chosenObject);
-                    mouseClicked = false;
                 }
             });
+            /* if object is chosen */
             if (chosenObject != null) {
+                /* find which tile user clicked and add the object he chose in the panel */
                 for (int i = 0; i < map.getGrid().length; i++) {
                     for (int j = 0; j < map.getGrid()[0].length; j++) {
                         int x = j * map.getTileSize() + map.getOffsetX();
@@ -108,26 +90,29 @@ public class Controller {
                         if (checkCollision(mouseX, mouseY, 1, 1, x, y, map.getTileSize(), map.getTileSize())) {
                             System.out.println("Pressed on: " + i + " ; " + j);
                             map.addObject(chosenObject, x, y, i, j);
-                            mouseClicked = false;
                         }
                     }
                 }
             }
+            /* identify that mouse is not clicked now */
+            mouseClicked = false;
         }
     }
 
     private void handlePlayerCollision() {
         map.getPlayer().updateDirection(getXDelta(), getYDelta());
         if (isCollision(Player.class, StaticObject.class) || isCollision(Player.class, Enemy.class)) {
-            updatePositions(-1);
+            updatePositions(-1); /* -1 - means to push objects back if there was a collision */
         }
     }
 
     private void handleSpellCollision() {
-        map.getObstacles().forEach(obstacle -> obstacle.getSpellList().forEach(Spell::move));
+        /* move every spell on the map */
+        map.getWaves().forEach(wave -> wave.getSpellList().forEach(Spell::move));
 
+        /* check collisions */
         isCollision(Spell.class, StaticObject.class);
-        if(map.getPlayer() != null) {
+        if (map.getPlayer() != null) {
             if (isCollision(Spell.class, Player.class)) {
                 HealthBar healthBar = map.getHealthBar();
                 healthBar.removeHealth();
@@ -136,15 +121,25 @@ public class Controller {
                 }
             }
         }
+        handleSpellRemoval();
     }
 
-    public boolean isCollision(Class<?> a, Class<?> b) {
+    private void handleSpellRemoval() {
+        /* remove spell from the map if it passes sky borders */
+        map.getWaves().stream()
+                .anyMatch(wave -> wave.getSpellList()
+                        .removeIf(spell -> (spell.getXPos() < map.getSky().getXPos() || spell.getXPos() > map.getSky().getXPos() + map.getSky().getWidth() || spell.getYPos() < map.getSky().getYPos() || spell.getYPos() > map.getSky().getYPos() + map.getSky().getHeight())));
+    }
+
+    private boolean isCollision(Class<?> a, Class<?> b) {
+        /* very complicated method. I don't know why I wrote it like that. */
         if (!a.isAssignableFrom(Player.class) || !b.isAssignableFrom(StaticObject.class)) {
             if (a.isAssignableFrom(Spell.class) && b.isAssignableFrom(StaticObject.class)) {
                 List<StaticObject> staticObjects = map.getStaticObjects();
-                return staticObjects.stream().filter(StaticObject::isCollidable)
-                        .anyMatch(staticObject -> map.getObstacles().stream()
-                                .anyMatch(obstacle -> obstacle.getSpellList()
+                return staticObjects.stream()
+                        .filter(StaticObject::isCollidable)
+                        .anyMatch(staticObject -> map.getWaves().stream()
+                                .anyMatch(wave -> wave.getSpellList()
                                         .removeIf(spell -> checkCollision(spell.getXPos(), spell.getYPos(), spell.getWidth(), spell.getHeight(), staticObject.getXPos(), staticObject.getYPos(), staticObject.getWidth(), staticObject.getHeight() / 2))));
             } else if (a.isAssignableFrom(Player.class) && b.isAssignableFrom(Enemy.class)) {
                 Player player = map.getPlayer();
@@ -152,8 +147,8 @@ public class Controller {
                         .anyMatch(enemy -> checkCollision(enemy.getXPos(), enemy.getYPos(), enemy.getWidth(), enemy.getHeight() / 2, player.getXPos(), player.getYPos(), player.getWidth(), player.getHeight()));
             } else if (a.isAssignableFrom(Spell.class) && b.isAssignableFrom(Player.class)) {
                 Player player = map.getPlayer();
-                return map.getObstacles().stream()
-                        .anyMatch(obstacle -> obstacle.getSpellList()
+                return map.getWaves().stream()
+                        .anyMatch(wave -> wave.getSpellList()
                                 .removeIf(spell -> checkCollision(spell.getXPos(), spell.getYPos(), spell.getWidth() / 2, spell.getHeight() / 2, player.getXPos(), player.getYPos(), player.getWidth() / 2, player.getHeight() / 2)));
             }
         } else {
@@ -173,16 +168,35 @@ public class Controller {
         return false;
     }
 
-    private boolean checkCollision(int r1x, int r1y,
-                                   int r1w, int r1h,
-                                   int r2x, int r2y,
-                                   int r2w, int r2h) {
+    private boolean checkCollision(int r1x, int r1y, int r1w, int r1h, int r2x, int r2y, int r2w, int r2h) {
         return r1x + r1w >= r2x &&      // r1 right edge past r2 left
                 r1x <= r2x + r2w &&     // r1 left edge past r2 right
                 r1y + r1h >= r2y &&     // r1 top edge past r2 bottom
                 r1y <= r2y + r2h;       // r1 bottom edge past r2 top
     }
 
+    /* method updates every object on the map, depending on offset
+    * 1 - map moves forward
+    * -1 - map moves backwards */
+    private void updatePositions(int offset) {
+        map.getEnemies().forEach(enemy -> enemy.move(xDelta * offset, yDelta * offset));
+        map.getStaticObjects().forEach(object -> object.move(xDelta * offset, yDelta * offset));
+        map.getPanel().forEach(panel -> panel.move(xDelta * offset, yDelta * offset));
+        map.getSky().move(xDelta * offset, yDelta * offset);
+
+        map.setOffsetX(map.getOffsetX() + xDelta * offset);
+        map.setOffsetY(map.getOffsetY() + yDelta * offset);
+
+        List<Wave> waves = map.getWaves();
+        waves.forEach(wave -> {
+            wave.setXPos(wave.getXPos() + xDelta * offset);
+            wave.setYPos(wave.getYPos() + yDelta * offset);
+            wave.getSpellList().forEach(spell -> {
+                spell.setXPos(spell.getXPos() + xDelta * offset);
+                spell.setYPos(spell.getYPos() + yDelta * offset);
+            });
+        });
+    }
 
     public void center() {
         /* TODO center map to make player at the center */
