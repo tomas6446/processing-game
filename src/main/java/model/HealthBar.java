@@ -8,7 +8,8 @@ import processing.core.PImage;
 import java.util.stream.IntStream;
 
 /**
- * @author tomas
+ * @author Tomas Kozakas, 1 grupe
+ * Health bar holds player's health
  */
 
 @Getter

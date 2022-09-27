@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @author Tomas Kozakas, 1 grupe
  * Reads map configuration json file,
  * initializes GameEngine.java class
  **/
@@ -44,6 +45,8 @@ public class Startup extends PApplet {
         size(screenWidth, screenHeight);
     }
 
+    /* function to read matrix from json file,
+    * configure sprites */
     private void config() {
         JSONObject json = loadJSONObject("data.json");
         JSONObject mapConfig = json.getJSONObject("mapConfig");

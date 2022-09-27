@@ -10,7 +10,7 @@ import view.Renderer;
 import java.util.List;
 
 /**
- * @author tomas
+ * @author Tomas Kozakas, 1 grupe
  * Is responsible for telling the MapRenderer what to render
  */
 @Getter

@@ -4,7 +4,7 @@ import lombok.Getter;
 import processing.core.PImage;
 
 /**
- * @author tomas
+ * @author Tomas Kozakas, 1 grupe
  * A simple Texture class to be used as a DTO
  */
 

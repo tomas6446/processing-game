@@ -6,8 +6,8 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 /**
- * @author tomas
- * Gets notified about the changes and render the map's current state
+ * @author Tomas Kozakas, 1 grupe
+ * Gets notified about the changes and renders the map's current state
  */
 public class MapRenderer implements Renderer {
     private static final int SPAWN_DELTA = 5000;

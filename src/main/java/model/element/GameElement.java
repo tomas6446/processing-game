@@ -7,7 +7,7 @@ import lombok.Setter;
 import model.type.ObjectType;
 
 /**
- * @author tomas
+ * @author Tomas Kozakas, 1 grupe
  * Holds object texture, type, position, width, height, as well as move method
  * to move every object on the map if player collided
  */

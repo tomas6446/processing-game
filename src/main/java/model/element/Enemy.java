@@ -6,7 +6,7 @@ import lombok.Setter;
 import model.type.ObjectType;
 
 /**
- * @author tomas
+ * @author Tomas Kozakas, 1 grupe
  */
 @Getter
 @Setter

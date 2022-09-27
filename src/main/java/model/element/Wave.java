@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author tomas
+ * @author Tomas Kozakas, 1 grupe
  * Wave is an object that holds and spawns enemy spells
  */
 @Getter

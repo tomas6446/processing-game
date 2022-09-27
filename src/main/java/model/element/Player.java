@@ -6,7 +6,7 @@ import lombok.Setter;
 import processing.core.PImage;
 
 /**
- * @author tomas
+ * @author Tomas Kozakas, 1 grupe
  */
 @Getter
 @Setter

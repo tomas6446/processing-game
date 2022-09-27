@@ -2,11 +2,7 @@ package model;
 
 import lombok.Getter;
 import lombok.Setter;
-import model.element.Enemy;
-import model.element.Player;
-import model.element.StaticObject;
-import model.element.Texture;
-import model.element.Wave;
+import model.element.*;
 import model.type.ObjectType;
 import processing.core.PImage;
 
@@ -15,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author tomas
+ * @author Tomas Kozakas, 1 grupe
  * Contains, groups, initializes the models together
  */
 @Getter
@@ -50,10 +46,10 @@ public class Map {
     private int offsetX = 100;
     private int offsetY = 100;
     private int[][] grid;
-    private List<Texture> textures;/* every texture is stored in a texture list */
-    private List<Wave> waves = new ArrayList<>();/* waves of enemy attacks */
-    private List<Enemy> enemies = new ArrayList<>(); /* enemy list */
-    private List<StaticObject> staticObjects = new ArrayList<>();/* static object list */
+    private List<Texture> textures;                                 /* every texture is stored in a texture list */
+    private List<Wave> waves = new ArrayList<>();                   /* waves of enemy attacks */
+    private List<Enemy> enemies = new ArrayList<>();                /* enemy list */
+    private List<StaticObject> staticObjects = new ArrayList<>();   /* static object list */
     private Player player;
     private HealthBar healthBar;
     private StaticObject sky;
@@ -64,9 +60,6 @@ public class Map {
         this.tileSize = tileSize;
         this.grid = grid;
 
-        addObject(ObjectType.SKY, -grid[0].length * tileSize / 2, 0, 0, 0);
-        addObject(ObjectType.HEALTH, 0, 0, 0, 0);
-
         initPanel();
         initMap();
     }
@@ -74,7 +67,6 @@ public class Map {
     public void initPanel() {
         PImage playerSprite = textures.get(5).getSprite().get(14, 4, 36, 60);
         Texture playerTexture = new Texture(playerSprite, 14, 4, 35, 60);
-
         panel.add(new StaticObject(playerTexture, offsetX, 16, getTileSize(), getTileSize(), false, ObjectType.PLAYER));
         panel.add(new StaticObject(textures.get(3), offsetX * 2, 16, getTileSize(), getTileSize(), false, ObjectType.ENEMY));
         panel.add(new StaticObject(textures.get(1), offsetX * 3, 16, getTileSize(), getTileSize(), false, ObjectType.FLOOR));
@@ -83,8 +75,11 @@ public class Map {
         panel.add(new StaticObject(textures.get(0), offsetX * 6, 16, getTileSize(), getTileSize(), false, ObjectType.TILE));
     }
 
-    /* the function goes through every matrix element to add object to the map. */
+    /* the function goes through every matrix element to add object to the map.
+     * matrix is configured in data.json file */
     public void initMap() {
+        addObject(ObjectType.SKY, -grid[0].length * tileSize / 2, 0, 0, 0);
+        addObject(ObjectType.HEALTH, 0, 0, 0, 0);
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 int x = j * tileSize + offsetX;
@@ -107,7 +102,7 @@ public class Map {
         }
     }
 
-    /* function add object to the list */
+    /* function to add or replace object on the map */
     public void addObject(ObjectType type, int x, int y, int i, int j) {
         int index = i + (j * grid[0].length);
         switch (type) {
@@ -115,15 +110,20 @@ public class Map {
                     staticObjects.set(index, new StaticObject(textures.get(2), x, y, WALL_WIDTH, WALL_HEIGHT, true, ObjectType.WALL)); /* wall */
             case TILE ->
                     staticObjects.set(index, new StaticObject(textures.get(0), x, y, tileSize, tileSize, false, ObjectType.TILE));
-            case HEALTH -> healthBar = new HealthBar(textures.get(7), BAR_WIDTH, BAR_HEIGHT);
+            case HEALTH ->
+                    healthBar = new HealthBar(textures.get(7), BAR_WIDTH, BAR_HEIGHT);
             case FLOOR ->
                     staticObjects.set(index, new StaticObject(textures.get(1), x, y, FLOOR_WIDTH, FLOOR_HEIGHT, false, ObjectType.FLOOR)); /* floor */
-            case PLAYER ->
-                    player = new Player(textures.get(5), x + tileSize / 2 - PLAYER_WIDTH / 2, y + tileSize / 2 - PLAYER_HEIGHT / 2, PLAYER_WIDTH, PLAYER_HEIGHT, 9, 4, SPEED); /* player */
-            case EXIT ->
-                    staticObjects.set(index, new StaticObject(textures.get(4), x, y, EXIT_WIDTH, EXIT_HEIGHT, true, ObjectType.EXIT)); /* exit */
             case SKY ->
                     sky = new StaticObject(textures.get(8), -grid[0].length * tileSize / 2, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT, false, ObjectType.SKY);
+            case PLAYER -> {
+                staticObjects.set(index, new StaticObject(textures.get(1), x, y, FLOOR_WIDTH, FLOOR_HEIGHT, false, ObjectType.FLOOR)); /* floor */
+                player = new Player(textures.get(5), x + tileSize / 2 - PLAYER_WIDTH / 2, y + tileSize / 2 - PLAYER_HEIGHT / 2, PLAYER_WIDTH, PLAYER_HEIGHT, 9, 4, SPEED); /* player */
+            }
+            case EXIT -> {
+                staticObjects.set(index, new StaticObject(textures.get(1), x, y, FLOOR_WIDTH, FLOOR_HEIGHT, false, ObjectType.FLOOR)); /* floor */
+                staticObjects.set(index, new StaticObject(textures.get(4), x, y, EXIT_WIDTH, EXIT_HEIGHT, true, ObjectType.EXIT)); /* exit */
+            }
             case ENEMY -> {
                 enemies.add(new Enemy(textures.get(3), x, y, ENEMY_WIDTH, ENEMY_HEIGHT)); /* enemy */
                 waves.add(new Wave(textures.get(6), x + tileSize / 2 - OBSTACLE_WIDTH / 2, y + tileSize / 2 - OBSTACLE_HEIGHT / 2, OBSTACLE_WIDTH, OBSTACLE_HEIGHT)); /* enemy attacks */

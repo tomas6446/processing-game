@@ -4,18 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import model.HealthBar;
 import model.Map;
-import model.element.Enemy;
-import model.element.Player;
-import model.element.Spell;
-import model.element.StaticObject;
-import model.element.Wave;
+import model.element.*;
 import model.type.ObjectType;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
 /**
- * @author tomas
+ * @author Tomas Kozakas, 1 grupe
  * The controller updates model's state,
  * handles collision between objects
  * updates positions when there is collision or move event,
@@ -131,8 +127,8 @@ public class Controller {
                         .removeIf(spell -> (spell.getXPos() < map.getSky().getXPos() || spell.getXPos() > map.getSky().getXPos() + map.getSky().getWidth() || spell.getYPos() < map.getSky().getYPos() || spell.getYPos() > map.getSky().getYPos() + map.getSky().getHeight())));
     }
 
+    /* separate logic for every class */
     private boolean isCollision(Class<?> a, Class<?> b) {
-        /* very complicated method. I don't know why I wrote it like that. */
         if (!a.isAssignableFrom(Player.class) || !b.isAssignableFrom(StaticObject.class)) {
             if (a.isAssignableFrom(Spell.class) && b.isAssignableFrom(StaticObject.class)) {
                 List<StaticObject> staticObjects = map.getStaticObjects();
