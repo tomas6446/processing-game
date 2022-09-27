@@ -29,6 +29,7 @@ public class Map {
     private static final int WALL_HEIGHT = 64;
     private static final int OBSTACLE_WIDTH = 32;
     private static final int OBSTACLE_HEIGHT = 32;
+    private static final int OBSTACLE_SPEED = 2;
     private static final int EXIT_WIDTH = 64;
     private static final int EXIT_HEIGHT = 64;
     private static final int BAR_WIDTH = 64;
@@ -123,7 +124,7 @@ public class Map {
             case ENEMY -> {
                 staticObjects.set(index, new StaticObject(textures.get(1), x, y, FLOOR_WIDTH, FLOOR_HEIGHT, false, ObjectType.FLOOR)); /* floor */
                 enemies.add(new Enemy(textures.get(3), x, y, ENEMY_WIDTH, ENEMY_HEIGHT)); /* enemy */
-                waves.add(new Wave(textures.get(6), x + tileSize / 2 - OBSTACLE_WIDTH / 2, y + tileSize / 2 - OBSTACLE_HEIGHT / 2, OBSTACLE_WIDTH, OBSTACLE_HEIGHT)); /* enemy attacks */
+                waves.add(new Wave(textures.get(6), x + tileSize / 2 - OBSTACLE_WIDTH / 2, y + tileSize / 2 - OBSTACLE_HEIGHT / 2, OBSTACLE_WIDTH, OBSTACLE_HEIGHT, OBSTACLE_SPEED)); /* enemy attacks */
             }
             default -> throw new IllegalStateException("Unexpected type: " + type);
         }

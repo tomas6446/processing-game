@@ -16,9 +16,10 @@ import java.util.List;
 public class Wave extends GameElement {
     private final List<Spell> spellList = new ArrayList<>();
     private int lastObstacleSpawn;
-
-    public Wave(Texture texture, int xPos, int yPos, int width, int height) {
+    private int speed;
+    public Wave(Texture texture, int xPos, int yPos, int width, int height, int speed) {
         super(texture, ObjectType.OBSTACLE, xPos, yPos, width, height);
+        this.speed = speed;
         spawnObstacle();
     }
 
@@ -26,14 +27,14 @@ public class Wave extends GameElement {
         Texture texture = getTexture();
         int xPos = getXPos();
         int yPos = getYPos();
-        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), 0, -1)); /* direction up */
-        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), 1, -1)); /* up right */
-        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), -1, 0)); /* left */
-        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), -1, -1)); /* up left */
-        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), 0, 1));  /* down */
-        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), 1, 1)); /* down right */
-        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), 1, 0)); /* right */
-        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), -1, 1)); /* down left */
+        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), 0, -speed)); /* direction up */
+        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), speed, -speed)); /* up right */
+        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), -speed, 0)); /* left */
+        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), -speed, -speed)); /* up left */
+        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), 0, speed));  /* down */
+        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), speed, speed)); /* down right */
+        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), speed, 0)); /* right */
+        spellList.add(new Spell(texture, xPos, yPos, getWidth(), getHeight(), -speed, speed)); /* down left */
 
     }
 }
